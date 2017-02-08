@@ -17,20 +17,19 @@ public class Transfer extends Thread {
 	private OutputStream aos, cos;
 	private CountDownLatch count = new CountDownLatch(2);
 
-	private final int agent_port;
 	private String header = null;
 	private ByteArrayOutputStream request = new ByteArrayOutputStream();
 	private ByteArrayOutputStream response = new ByteArrayOutputStream();
 
-	public Transfer(Socket client, int agent_port) {
+	public Transfer(Socket client) {
+		this.setDaemon(true);
 		this.client = client;
-		this.agent_port = agent_port;
 	}
 
 	@Override
 	public void run() {
 		try {
-			this.client.setSoTimeout(10000);
+			this.client.setSoTimeout(20000);
 			this.cis = this.client.getInputStream();
 			this.cos = this.client.getOutputStream();
 		} catch (IOException e) {
@@ -40,8 +39,8 @@ public class Transfer extends Thread {
 		}
 		/*---------------------------------------------------*/
 		try {
-			this.agent = new Socket("127.0.0.1", this.agent_port);
-			this.agent.setSoTimeout(10000);
+			this.agent = new Socket("127.0.0.1", 1080);
+			this.agent.setSoTimeout(20000);
 			this.ais = this.agent.getInputStream();
 			this.aos = this.agent.getOutputStream();
 		} catch (IOException e) {
@@ -63,7 +62,7 @@ public class Transfer extends Thread {
 		}
 		/*---------------------------------------------------*/
 		try {
-			byte[] bytes = this.header.getBytes("utf-8");
+			byte[] bytes = this.header.getBytes();
 			this.writeCTA(bytes, 0, bytes.length);
 		} catch (IOException e) {
 			System.out.println("write header ß∞‹.");
@@ -100,7 +99,7 @@ public class Transfer extends Thread {
 				baos.write(b);
 			} while (b != '\n');
 
-			return baos.toString("utf-8");
+			return baos.toString();
 		}
 	}
 

@@ -217,7 +217,7 @@ public class CharacterInformation implements GameData {
 	}
 
 	public static GameData[] get() {
-		return GameData.get(key, CharacterInformation::new);
+		return GameData.get(key, source -> new CharacterInformation(source));
 	}
 
 	/*----------------------------------------------------------*/

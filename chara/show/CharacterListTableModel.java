@@ -37,6 +37,18 @@ public class CharacterListTableModel extends AbstractTableModel {
 		array.add(new ColumnManager(true, "防御力", () -> Integer.class, cd -> cd.getDefense()[AppConfig.getFavorIndex()]));
 		array.add(new ColumnManager(true, "综合力", () -> Integer.class, cd -> cd.getPower()[AppConfig.getFavorIndex()]));
 		array.add(new ColumnManager(false, "国家", () -> String.class, cd -> CountryFilter.STRING_COUNTRY[cd.getCountryNumber()]));
+		array.add(new ColumnManager(true, "状态", () -> String.class, cd -> {
+			switch (cd.getOEB()) {
+				case 1:
+					return "原始";
+				case 2:
+					return "进化";
+				case 3:
+					return "开花";
+				default:
+					return "";
+			}
+		}));
 
 		return array;
 	}

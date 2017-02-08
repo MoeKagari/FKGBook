@@ -1,6 +1,7 @@
 package patch.api.getMaster;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.json.Json;
 import javax.json.JsonString;
@@ -12,7 +13,7 @@ import tool.GameUtils;
 import tool.ZLibUtils;
 
 public class GetMaster implements ApiResponse {
-	public final static String dir = "resources\\getMaster";
+	public final static String dir = "getMaster";
 	public final static String key = "flower-knight-girls.co.jp/api/v1/master/getMaster";
 
 	@Override
@@ -35,17 +36,16 @@ public class GetMaster implements ApiResponse {
 		}
 
 		Json.createReader(new ByteArrayInputStream(bytes)).readObject().forEach((key, value) -> {
-			if (value instanceof JsonString) {
-				if (CharacterBook.key.equals(key) || CharacterInformation.key.equals(key) || CharacterLeaderSkill.key.equals(key) || CharacterSkill.key.equals(key)) {
-					JsonString json = (JsonString) value;
-					try {
-						byte[] data = GameUtils.decompress(json.toString().getBytes("utf-8"));
+			try {
+				if (value instanceof JsonString) {
+					if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key))//
+					{
+						byte[] data = GameUtils.decompress(((JsonString) value).getString().getBytes("utf-8"));
 						FileUtil.save(dir + "\\" + key + ".csv", data);
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
-
 				}
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			}
 		});
 	}

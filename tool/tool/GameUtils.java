@@ -2,7 +2,7 @@ package tool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.nio.charset.Charset;
 
 public class GameUtils {
 	private static final String pass = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -61,7 +61,7 @@ public class GameUtils {
 	//数据序列  ->  长度3分组  ->  变换  ->(charAt)  组合
 	public static byte[] compress(byte[] source) {
 		int len = 3;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		StringBuilder sb = new StringBuilder();
 		for (int index = 0; index < source.length; index += len) {
 			int[] a = new int[len];
 			int i = 0;
@@ -71,44 +71,48 @@ public class GameUtils {
 			}
 
 			int b[] = compress(a);
-			switch (i) {
-				case 0:
-					b[1] = 64;
-				case 1:
-					b[2] = 64;
-				case 2:
-					b[3] = 64;
-				case 3:
+
+			int j = i;
+			while (j < len) {
+				b[j + 1] = 64;
+				j++;
 			}
+
 			for (int oneint : b) {
-				baos.write(pass.charAt(oneint));
+				sb.append(pass.charAt(oneint));
 			}
 		}
-		return baos.toByteArray();
+		return sb.toString().getBytes(Charset.forName("UTF-8"));
 	}
 
 	public static byte[] getBody(byte[] bytes, boolean chunked) {
 		int count = -1;
-		for (int i = 0; i <= bytes.length - 4;) {
-			if (bytes[i] != '\r') {
-				i++;
-				continue;
-			}
-
+		for (int i = 0; i < bytes.length; i++) {
+			if (bytes[i] != '\r') continue;
 			i++;
 			if (bytes[i] != '\n') continue;
 			i++;
 			if (bytes[i] != '\r') continue;
 			i++;
 			if (bytes[i] != '\n') continue;
+			i++;
 
-			count = i + 1;
+			count = i;
 			break;
 		}
 
 		if (count == -1) return null;
-
-		if (chunked == false) return Arrays.copyOfRange(bytes, count, bytes.length - 1);
+		if (chunked == false) {
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				while (count < bytes.length) {
+					baos.write(bytes[count] & 0xff);
+					count++;
+				}
+				return baos.toByteArray();
+			} catch (IOException e) {
+				return null;
+			}
+		}
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			while (count < bytes.length) {
@@ -129,6 +133,33 @@ public class GameUtils {
 
 				count += 2;
 			}
+			return baos.toByteArray();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	public static byte[] getHeader(byte[] bytes) {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			for (int i = 0; i < bytes.length; i++) {
+				baos.write(bytes[i] & 0xff);
+				if (bytes[i] != '\r') continue;
+
+				i++;
+				baos.write(bytes[i] & 0xff);
+				if (bytes[i] != '\n') continue;
+
+				i++;
+				baos.write(bytes[i] & 0xff);
+				if (bytes[i] != '\r') continue;
+
+				i++;
+				baos.write(bytes[i] & 0xff);
+				if (bytes[i] != '\n') continue;
+
+				break;
+			}
+
 			return baos.toByteArray();
 		} catch (IOException e) {
 			return null;

@@ -54,7 +54,7 @@ public class CharacterLeaderSkill implements GameData {
 	}
 
 	public static GameData[] get() {
-		return GameData.get(key, CharacterLeaderSkill::new);
+		return GameData.get(key, source -> new CharacterLeaderSkill(source));
 	}
 
 	/*----------------------------------------------------------*/

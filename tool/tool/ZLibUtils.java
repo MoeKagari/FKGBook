@@ -7,7 +7,7 @@ import java.util.zip.Inflater;
 public class ZLibUtils {
 
 	public static byte[] compress(byte[] data) {
-		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length)) {
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			Deflater compresser = new Deflater();
 			compresser.reset();
 			compresser.setInput(data);
@@ -28,7 +28,7 @@ public class ZLibUtils {
 	}
 
 	public static byte[] decompress(byte[] data) {
-		try (ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)) {
+		try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
 			Inflater decompresser = new Inflater();
 			decompresser.reset();
 			decompresser.setInput(data);
