@@ -14,7 +14,7 @@ import tool.HTTPUtil;
 import tool.ZLibUtils;
 
 public class GetMaster implements ApiResponse {
-	public final static String dir = "getMaster";
+	public final static String dir = "resources\\getMaster";
 	public final static String key = "flower-knight-girls.co.jp/api/v1/master/getMaster";
 
 	@Override

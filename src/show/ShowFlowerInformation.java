@@ -14,6 +14,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,7 +40,7 @@ public class ShowFlowerInformation {
 
 	private int rowHeight = 50;
 
-	private JFrame frame;
+	private JDialog frame;
 	private JTable table;
 	private CharacterListTableModel scltm;
 	private JScrollPane jsc;
@@ -300,7 +301,8 @@ public class ShowFlowerInformation {
 	}
 
 	private void initFrame() {
-		this.frame = new JFrame("所有花娘");
+		this.frame = new JDialog();
+		this.frame.setTitle("所有花娘");
 		this.frame.setSize(1500, 773);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setResizable(false);

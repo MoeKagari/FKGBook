@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -18,8 +21,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TrayItem;
 
 import patch.FKGPatcher;
 import show.ShowFlowerInformation;
@@ -43,6 +49,7 @@ public class FKGGui {
 	private Integer futuanzhangID = GuiConfig.getFutuanzhangID();
 	private FKGPatcher patcher = null;
 	private ShowFlowerInformation shower = null;
+	private TrayItem trayItem;
 
 	public FKGGui() {
 		this.shell = new Shell(this.display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
@@ -65,6 +72,12 @@ public class FKGGui {
 					FKGGui.this.shower.dispose();
 				}
 				FKGGui.this.logo.dispose();
+				FKGGui.this.trayItem.dispose();
+			}
+
+			@Override
+			public void shellIconified(ShellEvent arg0) {
+				FKGGui.this.shell.setVisible(false);
 			}
 		});
 
@@ -81,10 +94,14 @@ public class FKGGui {
 			serverPort.setText(String.valueOf(2222));
 			serverPort.setToolTipText("监听端口");
 			serverPort.setLayoutData(new GridData(GridData.FILL_BOTH));
+			serverPort.addModifyListener(this.getIntegerTextListener(serverPort, "监听端口只能为数字"));
+
 			Text agentPort = new Text(portGroup, SWT.CENTER);
 			agentPort.setText(String.valueOf(1080));
 			agentPort.setToolTipText("代理端口");
 			agentPort.setLayoutData(new GridData(GridData.FILL_BOTH));
+			agentPort.addModifyListener(this.getIntegerTextListener(agentPort, "代理端口只能为数字"));
+
 			Button apply = new Button(portGroup, SWT.PUSH);
 			apply.setText("应用");
 			apply.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
@@ -92,29 +109,36 @@ public class FKGGui {
 				try {
 					int port1 = Integer.parseInt(serverPort.getText());
 					int port2 = Integer.parseInt(agentPort.getText());
-					if (this.patcher != null) {
-						this.patcher.close();
-						this.printMessage("关闭成功");
+
+					if (this.patcher == null || this.patcher.getPort1() != port1) {
+						if (this.patcher != null) {
+							this.patcher.close();
+							this.printMessage("关闭成功");
+						}
+						this.patcher = new FKGPatcher(new ServerSocket(port1), port2);
+						this.patcher.start();
+						this.printMessage("开启成功: " + port1 + "→" + port2);
+					} else if (this.patcher.getPort2() != port2) {
+						this.patcher.setPort2(port2);
+						this.printMessage("更换代理端口成功");
 					}
-					this.patcher = new FKGPatcher(new ServerSocket(port1), port2);
-					this.patcher.start();
-					this.printMessage("开启成功");
 				} catch (Exception ev1) {
-					this.printMessage("开启失败");
+					this.printMessage((this.patcher == null ? "开启" : "更换配置") + "失败");
 					return;
 				}
 			}));
+
 			Button cancel = new Button(portGroup, SWT.PUSH);
 			cancel.setText("关闭");
 			cancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 			cancel.addSelectionListener(new ControlSelectionListener(ev -> {
 				if (this.patcher != null) try {
 					this.patcher.close();
+					this.patcher = null;
 					this.printMessage("关闭成功");
 				} catch (Exception e) {
 					this.printMessage("关闭失败");
 				}
-				this.patcher = null;
 			}));
 		}
 
@@ -165,6 +189,24 @@ public class FKGGui {
 
 		this.console = new org.eclipse.swt.widgets.List(this.composite, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);
 		this.console.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+
+		this.trayItem = new TrayItem(this.display.getSystemTray(), SWT.NONE);
+		this.trayItem.setImage(this.logo);
+		this.trayItem.addListener(SWT.Selection, ev -> {
+			this.shell.setVisible(true);
+			this.shell.setMinimized(false);
+		});
+		this.trayItem.addMenuDetectListener(new TrayItemMenuListener());
+	}
+
+	private ModifyListener getIntegerTextListener(Text control, String mexxage) {
+		return ev -> {
+			try {
+				Integer.parseInt(control.getText());
+			} catch (Exception ev1) {
+				this.printMessage(mexxage);
+			}
+		};
 	}
 
 	public void display() {
@@ -199,6 +241,24 @@ public class FKGGui {
 		public void widgetSelected(SelectionEvent ev) {
 			this.handler.accept(ev);
 		}
+	}
+
+	public class TrayItemMenuListener implements MenuDetectListener {
+		private Menu menu;
+
+		public TrayItemMenuListener() {
+			this.menu = new Menu(FKGGui.this.shell);
+
+			final MenuItem dispose = new MenuItem(this.menu, SWT.NONE);
+			dispose.setText("退出");
+			dispose.addSelectionListener(new ControlSelectionListener(ev -> FKGGui.this.shell.close()));
+		}
+
+		@Override
+		public void menuDetected(MenuDetectEvent e) {
+			this.menu.setVisible(true);
+		}
+
 	}
 
 }

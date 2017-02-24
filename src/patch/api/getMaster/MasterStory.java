@@ -1,5 +1,10 @@
 package patch.api.getMaster;
 
+import tool.Downloader;
+import tool.FileUtil;
+import tool.MD5;
+import tool.ZLibUtils;
+
 public class MasterStory implements GameData {
 	public static final String key = "masterStory";
 
@@ -13,9 +18,9 @@ public class MasterStory implements GameData {
 	 */
 	private final int type;
 	/**
-	 * 相应type里面的groupNumber
+	 * 相应type里面的id
 	 */
-	private final int groupNumber;
+	private final int idInType;
 
 	public MasterStory(String source) {
 		String[] info = source.trim().split(",");
@@ -23,7 +28,7 @@ public class MasterStory implements GameData {
 		int index = 0;
 		this.id = Integer.parseInt(info[index++]);
 		this.type = Integer.parseInt(info[index++]);
-		this.groupNumber = Integer.parseInt(info[index++]);
+		this.idInType = Integer.parseInt(info[index++]);
 	}
 
 	/*----------------------------------------------------------*/
@@ -56,8 +61,16 @@ public class MasterStory implements GameData {
 		}
 	}
 
-	public int getGroupNumber() {
-		return this.groupNumber;
+	public int getIdInType() {
+		return this.idInType;
+	}
+
+	public static void main(String[] args) {
+		for (int id : new int[] { 2218, 2219, 2220 }) {
+			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5("story_00" + id) + ".bin");
+			bytes = ZLibUtils.decompress(bytes);
+			FileUtil.save("" + id, bytes);
+		}
 	}
 
 }

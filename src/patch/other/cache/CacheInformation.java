@@ -58,9 +58,12 @@ class CacheInformation {
 //		for (int i = 0; i <= 10; i++)
 //			path.add(new CacheInformation("product/images/character/s/", "home_" + id + "_0" + i, "png"));
 //
-//		path.add(new CacheInformation("product/images/character/s/", "bustup_" + id, "png"));
-//		for (int i = 0; i <= 10; i++)
-//			path.add(new CacheInformation("product/images/character/s/", "bustup_" + id + "_0" + i, "png"));
+		path.add(new CacheInformation("product/images/character/s/", "bustup_" + id, "png"));
+		for (int i = 0; i <= 10; i++)
+			path.add(new CacheInformation("product/images/character/s/", "bustup_" + id + "_0" + i, "png"));
+		path.add(new CacheInformation("product/images/character/s/", "bustup_" + id + "_2", "png"));
+		for (int i = 0; i <= 10; i++)
+			path.add(new CacheInformation("product/images/character/s/", "bustup_" + id + "_2_0" + i, "png"));
 //		path.add(new CacheInformation("product/images/character/s/", "cutin_" + id, "png"));
 //		path.add(new CacheInformation("product/images/character/s/", "stand_" + id, "png"));
 		path.add(new CacheInformation("product/images/hscene_r18/", "r18_" + id + "_000", "png"));
@@ -75,7 +78,7 @@ class CacheInformation {
 
 	public static void main(String[] args) {
 		for (int id : new int[] { //
-				131925//
+				169701//
 		}) {
 			for (CacheInformation cain : get(id))
 				CacheDownloader.download(id, cain);

@@ -2,8 +2,8 @@ package gui;
 
 public class GuiConfig {
 
-	private static boolean allCG = true;
-	private static boolean tihuan = true;
+	private static boolean allCG = false;
+	private static boolean tihuan = false;
 	private static int futuanzhangID = 169702;
 
 	public static boolean isAllCG() {

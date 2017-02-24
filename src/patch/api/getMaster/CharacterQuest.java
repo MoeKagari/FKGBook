@@ -27,22 +27,22 @@ public class CharacterQuest implements GameData {
 		String[] info = source.trim().split(",");
 
 		int index = 0;
-		id = Integer.parseInt(info[index++]);
-		questName = info[index++];
-		c = info[index++];
-		d = info[index++];
-		e = info[index++];
-		nextQuestID = Integer.parseInt(info[index++]);
-		g = Integer.parseInt(info[index++]);
-		h = Integer.parseInt(info[index++]);
-		bid = Integer.parseInt(info[index++]);
-		j = Integer.parseInt(info[index++]);
-		k = Integer.parseInt(info[index++]);
-		l = Integer.parseInt(info[index++]);
-		m = Integer.parseInt(info[index++]);
-		n = info[index++];
-		o = info[index++];
-		p = Integer.parseInt(info[index++]);
+		this.id = Integer.parseInt(info[index++]);
+		this.questName = info[index++];
+		this.c = info[index++];
+		this.d = info[index++];
+		this.e = info[index++];
+		this.nextQuestID = Integer.parseInt(info[index++]);
+		this.g = Integer.parseInt(info[index++]);
+		this.h = Integer.parseInt(info[index++]);
+		this.bid = Integer.parseInt(info[index++]);
+		this.j = Integer.parseInt(info[index++]);
+		this.k = Integer.parseInt(info[index++]);
+		this.l = Integer.parseInt(info[index++]);
+		this.m = Integer.parseInt(info[index++]);
+		this.n = info[index++];
+		this.o = info[index++];
+		this.p = Integer.parseInt(info[index++]);
 	}
 
 	/*----------------------------------------------------------*/
@@ -51,8 +51,7 @@ public class CharacterQuest implements GameData {
 		for (GameData obj : cis) {
 			if (obj instanceof CharacterQuest) {
 				CharacterQuest ci = (CharacterQuest) obj;
-				if (ci.getID() == id)
-					return ci;
+				if (ci.getID() == id) return ci;
 			}
 		}
 
@@ -64,8 +63,8 @@ public class CharacterQuest implements GameData {
 	}
 
 	/*----------------------------------------------------------*/
-	
+
 	private int getID() {
-		return id;
+		return this.id;
 	}
 }

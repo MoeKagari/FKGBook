@@ -29,4 +29,20 @@ public class FKGPatcher extends Thread {
 	public void close() throws IOException {
 		this.server.close();
 	}
+
+	public boolean needChange(int port1, int port2) {
+		return this.server.getLocalPort() != port1 || this.port != port2;
+	}
+
+	public int getPort1() {
+		return this.server.getLocalPort();
+	}
+
+	public int getPort2() {
+		return this.port;
+	}
+
+	public void setPort2(int port) {
+		this.port = port;
+	}
 }
