@@ -4,20 +4,24 @@ public class CharacterQuest implements GameData {
 	private static String key = "masterCharacterQuest";
 
 	int id;
-	String questName;
-	String c, d, e;
+	String name;
+	String c, d;
+	/**
+	 * 1,2,3,4Ë³Ðò
+	 */
+	String e;
 	/**
 	 * 0 if not have
 	 */
 	int nextQuestID;
 	int g;
-	int h;
+	int cid;
 	int bid;
 	/**
 	 * all 2 , the kind number of story?
 	 */
 	int j;
-	int k;
+	int needCharacterLevel;
 	int l;
 	int m;
 	String n, o;
@@ -28,16 +32,16 @@ public class CharacterQuest implements GameData {
 
 		int index = 0;
 		this.id = Integer.parseInt(info[index++]);
-		this.questName = info[index++];
+		this.name = info[index++];
 		this.c = info[index++];
 		this.d = info[index++];
 		this.e = info[index++];
 		this.nextQuestID = Integer.parseInt(info[index++]);
 		this.g = Integer.parseInt(info[index++]);
-		this.h = Integer.parseInt(info[index++]);
+		this.cid = Integer.parseInt(info[index++]);
 		this.bid = Integer.parseInt(info[index++]);
 		this.j = Integer.parseInt(info[index++]);
-		this.k = Integer.parseInt(info[index++]);
+		this.needCharacterLevel = Integer.parseInt(info[index++]);
 		this.l = Integer.parseInt(info[index++]);
 		this.m = Integer.parseInt(info[index++]);
 		this.n = info[index++];
@@ -59,7 +63,7 @@ public class CharacterQuest implements GameData {
 	}
 
 	public static GameData[] get() {
-		return GameData.get(key, source -> new CharacterQuest(source));
+		return GameData.get(key, CharacterQuest::new);
 	}
 
 	/*----------------------------------------------------------*/

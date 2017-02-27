@@ -30,7 +30,7 @@ public class FileUtil {
 	}
 
 	public static File create(String filename) throws IOException {
-		return new File(filename);
+		return create(new File(filename));
 	}
 
 	public static File create(File file) throws IOException {

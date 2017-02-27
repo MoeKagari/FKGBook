@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 
+import gui.GuiConfig;
 import patch.api.ApiResponse;
 import patch.api.ApiResponseFactory;
 
@@ -41,7 +42,11 @@ public class Transfer extends Thread {
 		}
 		/*---------------------------------------------------*/
 		try {
-			this.agent = new Socket("127.0.0.1", this.port);
+			if (GuiConfig.isUseProxy()) {
+				this.agent = new Socket("127.0.0.1", this.port);
+			} else {
+				this.agent = new Socket("web.flower-knight-girls.co.jp", 80);
+			}
 			this.agent.setSoTimeout(20000);
 			this.ais = this.agent.getInputStream();
 			this.aos = this.agent.getOutputStream();

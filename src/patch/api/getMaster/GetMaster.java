@@ -1,7 +1,7 @@
 package patch.api.getMaster;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 
 import javax.json.Json;
 import javax.json.JsonString;
@@ -9,7 +9,6 @@ import javax.json.JsonString;
 import patch.Transfer;
 import patch.api.ApiResponse;
 import tool.FileUtil;
-import tool.GameUtils;
 import tool.HTTPUtil;
 import tool.ZLibUtils;
 
@@ -41,11 +40,11 @@ public class GetMaster implements ApiResponse {
 				if (value instanceof JsonString) {
 					//if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key))//
 					{
-						byte[] data = GameUtils.decrypt(((JsonString) value).getString().getBytes("utf-8"));
+						byte[] data = Base64.getDecoder().decode(((JsonString) value).getString().getBytes("utf-8"));
 						FileUtil.save(dir + "\\" + key + ".csv", data);
 					}
 				}
-			} catch (UnsupportedEncodingException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});

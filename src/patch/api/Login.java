@@ -3,6 +3,7 @@ package patch.api;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,7 +12,6 @@ import javax.json.JsonObjectBuilder;
 import gui.FKGGui;
 import gui.GuiConfig;
 import patch.Transfer;
-import tool.GameUtils;
 import tool.HTTPUtil;
 import tool.ZLibUtils;
 
@@ -23,7 +23,12 @@ public class Login implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		Integer target = FKGGui.gui.getFutuanzhangID();
+		if (FKGGui.ZHIYONG == false) {
+			transfer.handle();
+			return;
+		}
+
+		Integer target = GuiConfig.getFutuanzhangID();
 		if (GuiConfig.isTihuan() == false || target == null) {
 			transfer.handle();
 			return;
@@ -55,9 +60,9 @@ public class Login implements ApiResponse {
 			byte[] header = HTTPUtil.getHeader(bytes);
 			byte[] body = HTTPUtil.getBody(bytes, true);
 			body = ZLibUtils.decompress(body);
-			body = GameUtils.decrypt(body);
+			body = Base64.getDecoder().decode(body);
 			body = patch(body, target);
-			body = GameUtils.encrypt(body);
+			body = Base64.getEncoder().encode(body);
 			body = ZLibUtils.compress(body);
 
 			for (byte[] by : new byte[][] {//

@@ -38,7 +38,7 @@ public class MasterStage implements GameData {
 	}
 
 	public static GameData[] get() {
-		return GameData.get(key, source -> new MasterStage(source));
+		return GameData.get(key, MasterStage::new);
 	}
 
 	/*----------------------------------------------------------*/
@@ -68,7 +68,7 @@ public class MasterStage implements GameData {
 	}
 
 	public int getNumberInGroup() {
-		return numberInGroup;
+		return this.numberInGroup;
 	}
 
 }

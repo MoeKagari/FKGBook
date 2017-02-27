@@ -42,22 +42,19 @@ public class ValentineCardLetter {
 		bar.setStringPainted(true);
 		frame.setVisible(true);
 
-		new Thread() {
-			@Override
-			public void run() {
-				while (true) {
-					bar.setValue(count);
-					bar.setString(count + "/" + bar.getMaximum());
-					if (over) break;
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		new Thread(() -> {
+			while (true) {
+				bar.setValue(count);
+				bar.setString(count + "/" + bar.getMaximum());
+				if (over) break;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				bar.setString("Íê±Ï");
 			}
-		}.start();
+			bar.setString("Íê±Ï");
+		}).start();
 
 		combineImage(name);
 	}

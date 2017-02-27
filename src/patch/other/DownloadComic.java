@@ -16,7 +16,7 @@ public class DownloadComic {
 		// http://ct.webcomic-eb.com/viewer/EB/sasayuki_001/flowerknight_001/0001-0_jVE5/page3/x2/1.jpg
 		String[] huashu = new String[] {
 				//"0001-0_jVE5", "0002-0_QyH8", "0003-0_mY89", "0004-0_Wr8w", "0005-0_6Mch", "0006-0_9Vj3","0007-0_3NhB",
-		};
+				"0008-0_WGd9", };
 
 		for (int shu = 0; shu < huashu.length; shu++) {
 			for (int page = 1; page <= 25; page++) {

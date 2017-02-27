@@ -1,11 +1,12 @@
 package patch.api.getBook;
 
 import java.io.IOException;
+import java.util.Base64;
 
+import gui.FKGGui;
 import gui.GuiConfig;
 import patch.Transfer;
 import patch.api.ApiResponse;
-import tool.GameUtils;
 import tool.ZLibUtils;
 
 public class GetBook implements ApiResponse {
@@ -13,6 +14,11 @@ public class GetBook implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
+		if (FKGGui.ZHIYONG == false) {
+			transfer.handle();
+			return;
+		}
+
 		if (GuiConfig.isAllCG() == false) {
 			transfer.handle();
 			return;
@@ -20,7 +26,7 @@ public class GetBook implements ApiResponse {
 
 		try {
 			byte[] body = AllCGJSON.get().getBytes();
-			body = GameUtils.encrypt(body);
+			body = Base64.getEncoder().encode(body);
 			body = ZLibUtils.compress(body);
 			transfer.writeATC(body, 0, body.length);
 		} catch (IOException e) {

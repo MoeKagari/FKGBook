@@ -1,5 +1,9 @@
 package patch.api.getMaster;
 
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import tool.Downloader;
 import tool.FileUtil;
 import tool.MD5;
@@ -66,10 +70,61 @@ public class MasterStory implements GameData {
 	}
 
 	public static void main(String[] args) {
-		for (int id : new int[] { 2218, 2219, 2220 }) {
-			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5("story_00" + id) + ".bin");
+		GameData[] masterStages = MasterStage.get();
+		GameData[] characterQuests = CharacterQuest.get();
+		int unknown = 1;
+		for (GameData gd : get()) {
+			MasterStory msterStory = (MasterStory) gd;
+			int id = msterStory.id;
+
+			String filepath = "story";
+			if (msterStory.type == 2 || msterStory.type == 6) {
+				MasterStage masterStage = MasterStage.getElement(masterStages, msterStory.idInType);
+				if (masterStage == null) {
+					System.out.println("masterStage==null  " + id);
+					filepath += "\\" + unknown++;
+				} else {
+					filepath += "\\stage\\" + masterStage.getGroupNumber() + "\\" + masterStage.getName();
+				}
+			} else if (msterStory.type == 4) {
+				CharacterQuest characterQuest = CharacterQuest.getElement(characterQuests, msterStory.idInType);
+				if (characterQuest == null) {
+					System.out.println("characterQuest == null  " + id);
+					filepath += "\\" + unknown++;
+				} else {
+					int cid = characterQuest.cid;
+					cid -= cid >= 400000 ? 300000 : 0;
+					cid -= cid % 2 == 0 ? 1 : 0;
+					filepath += "\\characterQuest\\" + cid + "\\" + characterQuest.e + "#" + characterQuest.name;
+				}
+			} else {
+				System.out.println("msterStory.type ==" + msterStory.type);
+				continue;
+			}
+
+			File file = new File(filepath);
+			String dir = file.getParent();
+			String filename = file.getName();
+			{
+				Pattern pattern = Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
+				Matcher matcher = pattern.matcher(filename);
+				filename = matcher.replaceAll(""); // 将匹配到的非法字符以空替换
+			}
+			file = new File(dir + "\\" + filename);
+			if (file.exists()) continue;
+
+			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin");
+			if (bytes == null) {
+				System.out.println(id + " " + 1);
+				continue;
+			}
 			bytes = ZLibUtils.decompress(bytes);
-			FileUtil.save("" + id, bytes);
+			if (bytes == null) {
+				System.out.println(id + " " + 2);
+				continue;
+			}
+
+			FileUtil.save(file, bytes);
 		}
 	}
 
