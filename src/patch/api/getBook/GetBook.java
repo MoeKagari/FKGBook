@@ -3,7 +3,6 @@ package patch.api.getBook;
 import java.io.IOException;
 import java.util.Base64;
 
-import gui.FKGGui;
 import gui.GuiConfig;
 import patch.Transfer;
 import patch.api.ApiResponse;
@@ -14,7 +13,7 @@ public class GetBook implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		if (FKGGui.ZHIYONG == false) {
+		if (GuiConfig.patch() == false) {
 			transfer.handle();
 			return;
 		}

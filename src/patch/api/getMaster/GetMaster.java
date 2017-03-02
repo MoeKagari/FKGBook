@@ -45,7 +45,7 @@ public class GetMaster implements ApiResponse {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+
 			}
 		});
 	}

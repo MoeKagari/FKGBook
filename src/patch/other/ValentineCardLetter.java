@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,27 +24,34 @@ import tool.FileUtil;
 
 public class ValentineCardLetter {
 
-	public static void main(String[] args) throws IOException {
+	public static void create() {
 		String name;
 		int flag;
 		do {
 			name = JOptionPane.showInputDialog("请输入团长名");
 			if (name == null || "".equals(name)) return;
-			flag = JOptionPane.showConfirmDialog(null, "确认团长名为:" + name, "确认团长名", JOptionPane.YES_NO_OPTION);
+			flag = JOptionPane.showConfirmDialog(null, "确认团长名为:\n" + name, "确认团长名", JOptionPane.YES_NO_OPTION);
 			if (flag == JOptionPane.CLOSED_OPTION) return;
 		} while (flag != JOptionPane.OK_OPTION);
 
-		JFrame frame = new JFrame("美少女花骑士ValentineCardMaker");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JFrame frame = new JFrame("ValentineCardMaker");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
+		frame.setAlwaysOnTop(true);
 		frame.setSize(400, 100);
 		frame.setLocationRelativeTo(null);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				over = true;
+			}
+		});
 		JProgressBar bar = new JProgressBar(0, 640);
 		frame.add(bar, BorderLayout.CENTER);
 		bar.setStringPainted(true);
 		frame.setVisible(true);
 
-		new Thread(() -> {
+		Thread thread = new Thread(() -> {
 			while (true) {
 				bar.setValue(count);
 				bar.setString(count + "/" + bar.getMaximum());
@@ -53,16 +62,24 @@ public class ValentineCardLetter {
 					e.printStackTrace();
 				}
 			}
+			System.out.println("完毕");
 			bar.setString("完毕");
-		}).start();
+		});
+		thread.setDaemon(true);
+		thread.start();
 
-		combineImage(name);
+		try {
+			combineImage(name);
+		} catch (Exception e) {
+			over = true;
+			JOptionPane.showMessageDialog(frame, e, "发生错误", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
-	static int count = 0;
-	static boolean over = false;
+	private static int count = 0;
+	private static boolean over = false;
 
-	private static void combineImage(String name) throws IOException {
+	private static void combineImage(String name) throws Exception {
 		BufferedImage textWindow = ImageIO.read(new File("resources\\character_image\\valentine\\other\\text_window.png"));
 		//http://dugrqaqinbtcq.cloudfront.net/product/images/mypage/letter/background/valentinecard_2.png
 		//http://dugrqaqinbtcq.cloudfront.net/product/images/mypage/letter/accent/valentineaccent_1.png
@@ -76,8 +93,9 @@ public class ValentineCardLetter {
 			mls.put(ml.id, ml);
 		}
 
-		Map<Integer, CharacterData> cds = CharacterData.get();
-		for (CharacterData cd : cds.values()) {
+		for (CharacterData cd : CharacterData.get().values()) {
+			if (over) break;
+
 			int id = cd.getId();
 			MasterLetter ml = null;
 			switch (cd.getOEB()) {

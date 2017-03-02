@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TrayItem;
 
 import patch.FKGPatcher;
+import patch.other.ValentineCardLetter;
 import show.ShowFlowerInformation;
 
 public class FKGGui {
@@ -39,7 +40,6 @@ public class FKGGui {
 		GuiConfig.store();
 	}
 
-	public static boolean ZHIYONG = true;//是否自用,非自用时不初始化[补丁面板],以及直接不使用替换和全CG
 	public static final SimpleDateFormat CONSOLE_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 	private Image logo = new Image(this.display, this.getClass().getResourceAsStream("/icon.png"));
 	private Display display = Display.getDefault();
@@ -78,14 +78,24 @@ public class FKGGui {
 		this.composite.setLayout(new GridLayout(1, false));
 		this.composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Button allFKG = new Button(this.composite, SWT.PUSH);
-		allFKG.setText("所有花娘");
-		allFKG.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		allFKG.addSelectionListener(new ControlSelectionListener(ev -> {
-			if (this.shower == null) this.shower = new ShowFlowerInformation();
-			this.shower.display();
-			this.shower.setFocus();
-		}));
+		Composite otherWindow = new Composite(this.composite, SWT.NONE);
+		otherWindow.setLayout(new GridLayout(2, false));
+		otherWindow.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		{
+			Button allFKG = new Button(otherWindow, SWT.PUSH);
+			allFKG.setText("所有花娘");
+			allFKG.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			allFKG.addSelectionListener(new ControlSelectionListener(ev -> {
+				if (this.shower == null) this.shower = new ShowFlowerInformation();
+				this.shower.display();
+				this.shower.setFocus();
+			}));
+
+			Button vcm = new Button(otherWindow, SWT.PUSH);
+			vcm.setText("ValentineCardMaker");
+			vcm.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			vcm.addSelectionListener(new ControlSelectionListener(ev -> new Thread(() -> ValentineCardLetter.create()).start()));
+		}
 
 		Group portGroup = new Group(this.composite, SWT.NONE);
 		portGroup.setText("端口");
@@ -161,7 +171,7 @@ public class FKGGui {
 			}
 		}
 
-		if (ZHIYONG) this.initPatchGroup();
+		if (GuiConfig.patch()) this.initPatchGroup();
 
 		this.console = new org.eclipse.swt.widgets.List(this.composite, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);
 		this.console.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

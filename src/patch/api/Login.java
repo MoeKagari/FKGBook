@@ -9,7 +9,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import gui.FKGGui;
 import gui.GuiConfig;
 import patch.Transfer;
 import tool.HTTPUtil;
@@ -23,7 +22,7 @@ public class Login implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		if (FKGGui.ZHIYONG == false) {
+		if (GuiConfig.patch() == false) {
 			transfer.handle();
 			return;
 		}
@@ -91,7 +90,7 @@ public class Login implements ApiResponse {
 				builder.add(key, value);
 			}
 		});
-		{
+		if (json.containsKey("user")) {
 			JsonObject user = json.getJsonObject("user");
 			JsonObjectBuilder userBuilder = Json.createObjectBuilder();
 			user.forEach((key, value) -> {

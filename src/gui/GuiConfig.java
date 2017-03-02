@@ -55,6 +55,10 @@ public class GuiConfig {
 
 	/*---------------------------------------------------------------------------------------------*/
 
+	public static boolean patch() {
+		return Boolean.parseBoolean(config.getProperty("patch", Boolean.toString(false)));
+	}
+
 	public static boolean isAllCG() {
 		return Boolean.parseBoolean(config.getProperty("allCG", Boolean.toString(false)));
 	}
