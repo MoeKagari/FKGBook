@@ -37,7 +37,7 @@ public class FileUtil {
 		file = file.getAbsoluteFile();
 		File parent = file.getParentFile();
 		if (!parent.exists()) parent.mkdirs();
-		if (!file.exists() || !file.isDirectory()) file.createNewFile();
+		if (!file.exists()) file.createNewFile();
 
 		return file;
 	}

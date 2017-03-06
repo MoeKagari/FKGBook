@@ -132,7 +132,7 @@ public class ValentineCardLetter {
 
 		BufferedImage image = combineImage(getTextWindow(ml.text, textWindow, name), background, accent, bustup);
 		try {
-			ImageIO.write(image, "png", new File("resources\\character_image\\valentine\\card\\" + id + ".png"));
+			ImageIO.write(image, "png", FileUtil.create("resources\\character_image\\valentine\\card\\" + id + ".png"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

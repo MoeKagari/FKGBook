@@ -38,7 +38,7 @@ public class GetMaster implements ApiResponse {
 		Json.createReader(new ByteArrayInputStream(bytes)).readObject().forEach((key, value) -> {
 			try {
 				if (value instanceof JsonString) {
-					//if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key))//
+					//if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key) || CharacterBook.key.equals(key))//
 					{
 						byte[] data = Base64.getDecoder().decode(((JsonString) value).getString().getBytes("utf-8"));
 						FileUtil.save(dir + "\\" + key + ".csv", data);

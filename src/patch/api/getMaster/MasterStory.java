@@ -70,6 +70,23 @@ public class MasterStory implements GameData {
 	}
 
 	public static void main(String[] args) {
+		for (int id : new int[] { 1790, 1791, 1792, 2245 }) {
+			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin");
+			if (bytes == null) {
+				System.out.println(id + " " + 1);
+				continue;
+			}
+			bytes = ZLibUtils.decompress(bytes);
+			if (bytes == null) {
+				System.out.println(id + " " + 2);
+				continue;
+			}
+
+			FileUtil.save(id + "", bytes);
+		}
+	}
+
+	public static void main() {
 		GameData[] masterStages = MasterStage.get();
 		GameData[] characterQuests = CharacterQuest.get();
 		int unknown = 1;
