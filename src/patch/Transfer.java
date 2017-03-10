@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 
-import gui.GuiConfig;
 import patch.api.ApiResponse;
 import patch.api.ApiResponseFactory;
 
@@ -24,7 +23,6 @@ public class Transfer extends Thread {
 	private ByteArrayOutputStream response = new ByteArrayOutputStream();
 
 	public Transfer(Socket client, int port) {
-		this.setDaemon(true);
 		this.client = client;
 		this.port = port;
 	}
@@ -32,7 +30,7 @@ public class Transfer extends Thread {
 	@Override
 	public void run() {
 		try {
-			this.client.setSoTimeout(20000);
+			this.client.setSoTimeout(60000);
 			this.cis = this.client.getInputStream();
 			this.cos = this.client.getOutputStream();
 		} catch (IOException e) {
@@ -42,12 +40,8 @@ public class Transfer extends Thread {
 		}
 		/*---------------------------------------------------*/
 		try {
-			if (GuiConfig.isUseProxy()) {
-				this.agent = new Socket("127.0.0.1", this.port);
-			} else {
-				this.agent = new Socket("web.flower-knight-girls.co.jp", 80);
-			}
-			this.agent.setSoTimeout(20000);
+			this.agent = new Socket("127.0.0.1", this.port);
+			this.agent.setSoTimeout(60000);
 			this.ais = this.agent.getInputStream();
 			this.aos = this.agent.getOutputStream();
 		} catch (IOException e) {
@@ -142,7 +136,7 @@ public class Transfer extends Thread {
 				this.writeATC(buffer, 0, len);
 			}
 		} catch (IOException e) {
-			System.out.println("a to c ´íÎó:" + this.header);
+			System.out.println("a to c ´íÎó:" + this.header.trim());
 		} finally {
 			this.countDown();
 		}
@@ -156,7 +150,7 @@ public class Transfer extends Thread {
 				this.writeCTA(buffer, 0, len);
 			}
 		} catch (IOException e) {
-			System.out.println("c to a ´íÎó:" + this.header);
+			System.out.println("c to a ´íÎó:" + this.header.trim());
 		} finally {
 			this.countDown();
 		}

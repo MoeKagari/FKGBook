@@ -45,14 +45,6 @@ public class GuiConfig {
 		config.setProperty("agentPort", String.valueOf(agentPort));
 	}
 
-	public static boolean isUseProxy() {
-		return Boolean.parseBoolean(config.getProperty("useProxy", Boolean.toString(false)));
-	}
-
-	public static void setUseProxy(boolean useProxy) {
-		config.setProperty("useProxy", Boolean.toString(useProxy));
-	}
-
 	/*---------------------------------------------------------------------------------------------*/
 
 	public static boolean patch() {

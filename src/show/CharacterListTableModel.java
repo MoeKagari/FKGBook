@@ -26,7 +26,6 @@ public class CharacterListTableModel extends AbstractTableModel {
 		array.add(new ColumnManager(true, "花名", () -> String.class, cd -> {
 			String cn = cd.getChineseName();
 			if (ShowConfig.isUseChineseName() && cn != null) return cd.getChineseName();
-			if (cn == null) System.out.println(cd.getId() + "," + cd.getName());
 			return cd.getName();
 		}));
 		array.add(new ColumnManager(false, "稀有度", () -> String.class, cd -> "★★★★★★★★★★".substring(0, cd.getRarity())));

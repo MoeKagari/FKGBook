@@ -1,10 +1,12 @@
 package patch.api.getMaster;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.function.Function;
-
-import tool.FileUtil;
+import java.util.stream.Collectors;
 
 public interface GameData {
 
@@ -15,20 +17,9 @@ public interface GameData {
 			return null;
 		}
 
-		byte[] bytes = FileUtil.read(file);
-		if (bytes == null) {
-			System.out.println("bytes == null in GameData :" + key);
-			return null;
-		}
-
-		try {
-			String[] temp = new String(bytes, "utf-8").split("\n");
-			GameData[] result = new GameData[temp.length];
-			for (int i = 0; i < temp.length; i++)
-				result[i] = gdd.apply(temp[i]);
-			return result;
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"))) {
+			return reader.lines().map(gdd).collect(Collectors.toList()).toArray(new GameData[0]);
+		} catch (IOException e) {
 			return null;
 		}
 	}

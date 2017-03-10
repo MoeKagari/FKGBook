@@ -3,10 +3,12 @@ package show;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,6 +28,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import patch.api.getMaster.CharacterInformation;
+import patch.other.ShowFlower;
 import show.CharacterListTableModel.ColumnManager;
 import show.config.ShowConfig;
 import show.filter.AttackAttributeFilter;
@@ -64,6 +68,7 @@ public class ShowFlowerInformation {
 	};
 
 	private SkillPanel panel;
+	private ShowOther showFlower;
 
 	private JRadioButton[] jrb_oeb;
 	private JCheckBox jcb_cn;
@@ -81,6 +86,11 @@ public class ShowFlowerInformation {
 		this.initJSC();
 		this.initComponent();
 		this.layoutFrame();
+
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = size.width;
+		int height = size.height;
+		this.showFlower = new ShowOther(null, 3 * width, 3 * height);
 
 		this.updateTable();
 		this.frame.requestFocus();
@@ -289,6 +299,12 @@ public class ShowFlowerInformation {
 					if (cd != null) {
 						ShowFlowerInformation.this.panel.showCharacter(cd);
 					}
+					if (e.getClickCount() == 2) {
+						BufferedImage image = ShowFlower.show(CharacterInformation.getElement(CharacterInformation.get(), id));
+						if (image != null) {
+							ShowFlowerInformation.this.showFlower.display(id, image);
+						}
+					}
 				}
 			}
 		});
@@ -305,7 +321,7 @@ public class ShowFlowerInformation {
 		this.frame.setTitle("ËùÓÐ»¨Äï");
 		this.frame.setSize(1500, 773);
 		this.frame.setLocationRelativeTo(null);
-		this.frame.setResizable(false);
+		//this.frame.setResizable(false);
 		this.frame.getContentPane().setLayout(new BorderLayout());
 		this.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}

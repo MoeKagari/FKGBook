@@ -17,8 +17,9 @@ import patch.api.getMaster.CharacterInformation;
 import patch.api.getMaster.CharacterLeaderSkill;
 import patch.api.getMaster.CharacterSkill;
 import patch.api.getMaster.GameData;
+import show.config.ShowConfig;
 import tool.Downloader;
-import tool.MD5;
+import tool.FileUtil;
 import tool.ZLibUtils;
 
 public class ShowFlower {
@@ -52,15 +53,15 @@ public class ShowFlower {
 
 	/*-------------------------------------------------------*/
 
-	public static void show(CharacterInformation ci) {
-		if (ci == null) return;
+	public static BufferedImage show(CharacterInformation ci) {
+		if (ci == null) return null;
 
 		int orb = ci.getOeb();
 		int id = ci.getID();
 
 		if (orb == 1) {
 			System.out.println("Ô­Ê¼½ÇÉ«£º" + id);
-			return;
+			return null;
 		}
 
 		ArrayList<BufferedImage> ims = new ArrayList<>();
@@ -95,12 +96,20 @@ public class ShowFlower {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return image;
 	}
 
 	private static BufferedImage getImage(int id) {
-		final String profix = "http://dugrqaqinbtcq.cloudfront.net/";
-		final String dir = "product/images/character/s/";
-		String urlStr = profix + dir + MD5.getMD5("stand_s_" + id) + "." + "bin";
+		File file = new File(ShowConfig.CHARACTER_STAND_S + "\\" + id + ".png");
+		if (file.exists()) {
+			try {
+				return ImageIO.read(file);
+			} catch (IOException e) {
+
+			}
+		}
+
+		String urlStr = ShowConfig.getCharacterStandSNetpath(id);
 
 		byte[] bytes = Downloader.download(urlStr);
 		if (bytes == null) {
@@ -115,6 +124,7 @@ public class ShowFlower {
 		}
 
 		try {
+			FileUtil.save(file, bytes);
 			return ImageIO.read(new ByteArrayInputStream(bytes));
 		} catch (IOException e) {
 			System.out.println("ImageIO.read() ´íÎó.");

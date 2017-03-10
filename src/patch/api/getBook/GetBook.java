@@ -23,17 +23,19 @@ public class GetBook implements ApiResponse {
 			return;
 		}
 
-		try {
-			byte[] body = AllCGJSON.get().getBytes();
-			body = Base64.getEncoder().encode(body);
-			body = ZLibUtils.compress(body);
-			transfer.writeATC(body, 0, body.length);
-		} catch (IOException e) {
-			System.out.println("getBook() ´íÎó");
-		} finally {
-			transfer.countDown();
-			transfer.countDown();
-		}
+		new Thread(() -> {
+			try {
+				byte[] body = AllCGJSON.get().getBytes();
+				body = Base64.getEncoder().encode(body);
+				body = ZLibUtils.compress(body);
+				transfer.writeATC(body, 0, body.length);
+			} catch (IOException e) {
+				System.out.println("getBook() ´íÎó");
+			} finally {
+				transfer.countDown();
+				transfer.countDown();
+			}
+		}).start();
 	}
 
 	@Override

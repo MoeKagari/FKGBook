@@ -52,7 +52,7 @@ public class FKGGui {
 	private ShowFlowerInformation shower = null;
 
 	public FKGGui(String message) {
-		this.shell = new Shell(this.display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
+		this.shell = new Shell(this.display, SWT.CLOSE | SWT.TITLE | SWT.MIN | SWT.RESIZE);
 		this.shell.setImage(this.logo);
 		this.shell.setLayout(new GridLayout(1, false));
 		this.shell.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -118,7 +118,9 @@ public class FKGGui {
 			agentPort.setLayoutData(new GridData(GridData.FILL_BOTH));
 			agentPort.addSelectionListener(new ControlSelectionListener(ev -> {
 				GuiConfig.setAgentport(agentPort.getSelection());
-				if (this.patcher != null) this.printChangeAgentPort("更换配置: ");
+				if (this.patcher != null) {
+					this.printChangeAgentPort("更换配置: ");
+				}
 			}));
 
 			Composite portButtonComposite = new Composite(portGroup, SWT.NONE);
@@ -158,15 +160,6 @@ public class FKGGui {
 					} catch (Exception e) {
 						this.printMessage("关闭失败");
 					}
-				}));
-
-				Button useProxy = new Button(portButtonComposite, SWT.CHECK);
-				useProxy.setText("使用代理");
-				useProxy.setSelection(GuiConfig.isUseProxy());
-				useProxy.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
-				useProxy.addSelectionListener(new ControlSelectionListener(ev -> {
-					GuiConfig.setUseProxy(useProxy.getSelection());
-					if (this.patcher != null) this.printChangeAgentPort("更换配置: ");
 				}));
 			}
 		}
@@ -225,7 +218,7 @@ public class FKGGui {
 	}
 
 	private void printChangeAgentPort(String profix) {
-		String proxyStringForConsole = this.patcher == null ? "" : (this.patcher.getPort1() + "→" + (GuiConfig.isUseProxy() ? this.patcher.getPort2() : "直连"));
+		String proxyStringForConsole = this.patcher == null ? "" : (this.patcher.getPort1() + "→" + this.patcher.getPort2());
 		this.printMessage(profix + proxyStringForConsole);
 	}
 

@@ -1,21 +1,15 @@
 package show;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.function.Function;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JWindow;
 
 import show.config.ShowConfig;
 import tool.IndexFinder;
@@ -86,8 +80,8 @@ public class SkillPanel extends JPanel {
 	}
 
 	public void dispose() {
-		this.showStand.window.dispose();
-		this.showValentine.window.dispose();
+		this.showStand.getWindow().dispose();
+		this.showValentine.getWindow().dispose();
 	}
 
 	public void showCharacter(CharacterData cd) {
@@ -113,57 +107,6 @@ public class SkillPanel extends JPanel {
 			super.paint(g);
 			if (SkillPanel.this.image != null) {
 				g.drawImage(SkillPanel.this.image, 0, 0, this);
-			}
-		}
-	}
-
-	private class ShowOther extends JPanel {
-		private JWindow window;
-		private BufferedImage image;
-		private int id;
-
-		public ShowOther(String filedir, int width, int height) {
-			this.window = new JWindow();
-			this.window.setSize(width, height);
-			this.window.setLocationRelativeTo(null);
-			this.window.setAlwaysOnTop(true);
-			this.window.setContentPane(this);
-			this.window.setBackground(new Color(0, 0, 0, 0f));
-			DragWindowMoveListener ma = new DragWindowMoveListener(this.window);
-			this.window.addMouseListener(ma);
-			this.window.addMouseMotionListener(ma);
-
-			this.window.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent ev) {
-					if (ev.getButton() == MouseEvent.BUTTON3) {
-						ShowOther.this.window.setAlwaysOnTop(false);
-						int flag = JOptionPane.showConfirmDialog(ShowOther.this.window, "是否打开图片所在位置？", "打开图片所在位置", JOptionPane.YES_NO_OPTION);
-						ShowOther.this.window.setAlwaysOnTop(true);
-						if (flag == JOptionPane.OK_OPTION) {
-							try {
-								Runtime.getRuntime().exec("explorer /e,/select ," + filedir + "\\" + ShowOther.this.id + ".png");
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			});
-		}
-
-		public void display(int id, BufferedImage image) {
-			this.id = id;
-			this.image = image;
-			this.repaint();
-			this.window.setVisible(true);
-		}
-
-		@Override
-		public void paint(Graphics g) {
-			super.paint(g);
-			if (this.image != null) {
-				g.drawImage(this.image, 0, 0, this);
 			}
 		}
 	}

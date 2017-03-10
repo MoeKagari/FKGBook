@@ -11,6 +11,7 @@ import javax.json.JsonObjectBuilder;
 
 import gui.GuiConfig;
 import patch.Transfer;
+import tool.FileUtil;
 import tool.HTTPUtil;
 import tool.ZLibUtils;
 
@@ -48,37 +49,47 @@ public class Login implements ApiResponse {
 			}
 		}).start();
 
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			byte[] buffer = new byte[1024];
-			int len;
-			while ((len = transfer.readATC(buffer)) != -1) {
-				baos.write(buffer, 0, len);
-			}
+		new Thread(() -> {
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = transfer.readATC(buffer)) != -1) {
+					baos.write(buffer, 0, len);
+				}
 
-			byte[] bytes = baos.toByteArray();
-			byte[] header = HTTPUtil.getHeader(bytes);
-			byte[] body = HTTPUtil.getBody(bytes, true);
-			body = ZLibUtils.decompress(body);
-			body = Base64.getDecoder().decode(body);
-			body = patch(body, target);
-			body = Base64.getEncoder().encode(body);
-			body = ZLibUtils.compress(body);
+				byte[] bytes = baos.toByteArray();
+				byte[] header = HTTPUtil.getHeader(bytes);
+				boolean chunked = new String(header).contains("chunked");
+				byte[] body = HTTPUtil.getBody(bytes, chunked);
+				body = ZLibUtils.decompress(body);
+				body = Base64.getDecoder().decode(body);
+				body = patch(body, target);
+				body = Base64.getEncoder().encode(body);
+				body = ZLibUtils.compress(body);
 
-			for (byte[] by : new byte[][] {//
-					header,//
-					Integer.toHexString(body.length).getBytes(),//
-					"\r\n".getBytes(),//
-					body,//
-					"\r\n".getBytes(),//
-					"0\r\n\r\n".getBytes(),//
-			}) {
-				transfer.writeATC(by, 0, by.length);
+				if (chunked) {
+					for (byte[] by : new byte[][] {//
+							header,//
+							Integer.toHexString(body.length).getBytes(),//
+							"\r\n".getBytes(),//
+							body,//
+							"\r\n".getBytes(),//
+							"0\r\n\r\n".getBytes(),//
+					}) {
+						transfer.writeATC(by, 0, by.length);
+					}
+				} else {
+					byte[] newHeader = new String(header).replaceAll("\r\nContent-Length.+?\r\n", "\r\nContent-Length:" + body.length + "\r\n").getBytes();
+					FileUtil.save("aa", newHeader);
+					transfer.writeATC(newHeader, 0, newHeader.length);
+					transfer.writeATC(body, 0, body.length);
+				}
+			} catch (IOException e) {
+				System.out.println("a to c ´íÎó:\n" + transfer.getHeader().trim());
+			} finally {
+				transfer.countDown();
 			}
-		} catch (IOException e) {
-			System.out.println("a to c ´íÎó:\n" + transfer.getHeader().trim());
-		} finally {
-			transfer.countDown();
-		}
+		}).start();
 	}
 
 	private static byte[] patch(byte[] body, int target) {
