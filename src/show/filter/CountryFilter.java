@@ -1,20 +1,27 @@
 package show.filter;
 
-import show.CharacterData;
+import show.data.CharacterData;
 
 public class CountryFilter implements Filter {
-	public static final String[] STRING_COUNTRY = { "ÎŞ", "¥¦¥£¥ó¥¿©`¥í©`¥º", "¥Ğ¥Ê¥Ê¥ª©`¥·¥ã¥ó", "¥Ö¥í¥Ã¥µ¥à¥Ò¥ë", "¥Ù¥ë¥¬¥â¥Ã¥È¥Ğ¥ì©`", "¥ê¥ê¥£¥¦¥Ã¥É", "", "¥í©`¥¿¥¹¥ì¥¤¥¯" };
-	private static final int[] COUNTRY = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	public static final StringInteger[] SIS = {//
+			new StringInteger("æ— ", 0),//
+			new StringInteger("ã‚¦ã‚£ãƒ³ã‚¿ãƒ¼ãƒ­ãƒ¼ã‚º", 1),//
+			new StringInteger("ãƒãƒŠãƒŠã‚ªãƒ¼ã‚·ãƒ£ãƒ³", 2),//
+			new StringInteger("ãƒ–ãƒ­ãƒƒã‚µãƒ ãƒ’ãƒ«", 3),//
+			new StringInteger("ãƒ™ãƒ«ã‚¬ãƒ¢ãƒƒãƒˆãƒãƒ¬ãƒ¼", 4),//
+			new StringInteger("ãƒªãƒªã‚£ã‚¦ãƒƒãƒ‰", 5),//
+			new StringInteger("", 6),//
+			new StringInteger("ãƒ­ãƒ¼ã‚¿ã‚¹ãƒ¬ã‚¤ã‚¯", 7),//
+	};
 
 	private final int country;
 
 	public CountryFilter(int index) {
-		this.country = COUNTRY[index];
+		this.country = SIS[index].getInteger();
 	}
 
 	@Override
 	public boolean filter(CharacterData cd) {
-		return this.country == 0 || this.country == cd.getCountryNumber();
+		return this.country == 0 || this.country == cd.ci.getCountryNumber();
 	}
-
 }

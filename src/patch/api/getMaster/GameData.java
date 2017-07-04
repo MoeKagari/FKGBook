@@ -13,7 +13,7 @@ public interface GameData {
 	public static GameData[] get(final String key, final Function<String, GameData> gdd) {
 		File file = new File(GetMaster.dir + "\\" + key + ".csv");
 		if (!file.exists() | !file.isFile()) {
-			System.out.println("ÎÄ¼ş²»´æÔÚ in GameData£º" + key);
+			System.out.println("æ–‡ä»¶ä¸å­˜åœ¨ in GameDataï¼š" + key);
 			return null;
 		}
 

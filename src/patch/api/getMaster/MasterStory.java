@@ -1,11 +1,13 @@
 package patch.api.getMaster;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
+
 import tool.Downloader;
-import tool.FileUtil;
 import tool.MD5;
 import tool.ZLibUtils;
 
@@ -14,15 +16,15 @@ public class MasterStory implements GameData {
 
 	private final int id;
 	/**
-	 * Ä¿Ç°Ö»ÓĞ2,4,6 
+	 * ç›®å‰åªæœ‰2,4,6 
 	 * 2017-1-13 5:12:41
 	 *  2:masterStage
 	 *  4:masterCharacterQuest
-	 *  6:Í¨¹ØÄ³Ò»groupºó³öÏÖµÄºóĞø¾çÇé
+	 *  6:é€šå…³æŸä¸€groupåå‡ºç°çš„åç»­å‰§æƒ…
 	 */
 	private final int type;
 	/**
-	 * ÏàÓ¦typeÀïÃæµÄid
+	 * ç›¸åº”typeé‡Œé¢çš„id
 	 */
 	private final int idInType;
 
@@ -70,8 +72,9 @@ public class MasterStory implements GameData {
 	}
 
 	public static void main(String[] args) {
-		for (int id : new int[] { 1790, 1791, 1792, 2245 }) {
-			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin");
+		for (int id : new int[] { 2678, 2679, 2680 }) {
+			String urlStr = "http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin";
+			byte[] bytes = Downloader.download(urlStr);
 			if (bytes == null) {
 				System.out.println(id + " " + 1);
 				continue;
@@ -82,7 +85,11 @@ public class MasterStory implements GameData {
 				continue;
 			}
 
-			FileUtil.save(id + "", bytes);
+			try {
+				FileUtils.writeByteArrayToFile(new File(id + ""), bytes);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -125,12 +132,13 @@ public class MasterStory implements GameData {
 			{
 				Pattern pattern = Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
 				Matcher matcher = pattern.matcher(filename);
-				filename = matcher.replaceAll(""); // ½«Æ¥Åäµ½µÄ·Ç·¨×Ö·ûÒÔ¿ÕÌæ»»
+				filename = matcher.replaceAll(""); // å°†åŒ¹é…åˆ°çš„éæ³•å­—ç¬¦ä»¥ç©ºæ›¿æ¢
 			}
 			file = new File(dir + "\\" + filename);
 			if (file.exists()) continue;
 
-			byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin");
+			String urlStr = "http://dugrqaqinbtcq.cloudfront.net/product/event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin";
+			byte[] bytes = Downloader.download(urlStr);
 			if (bytes == null) {
 				System.out.println(id + " " + 1);
 				continue;
@@ -141,7 +149,11 @@ public class MasterStory implements GameData {
 				continue;
 			}
 
-			FileUtil.save(file, bytes);
+			try {
+				FileUtils.writeByteArrayToFile(file, bytes);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -7,12 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.BooleanSupplier;
+import java.util.function.UnaryOperator;
 
 import patch.api.ApiResponse;
-import patch.api.ApiResponseFactory;
 
-public class Transfer extends Thread {
-	private final int port;
+public class Transfer extends Thread implements ApiResponse {
+	private final int port;//ä»£ç†çš„ç«¯å£
 	private Socket client, agent;
 	private InputStream ais, cis;
 	private OutputStream aos, cos;
@@ -30,99 +31,111 @@ public class Transfer extends Thread {
 	@Override
 	public void run() {
 		try {
+			for (BooleanSupplier step : new BooleanSupplier[] { this::initClient, this::initAgent, this::readHeader, this::writeHeader }) {
+				if (step.getAsBoolean() == false) {
+					return;
+				}
+			}
+			this.deal();
+		} finally {
+			this.closeIO();
+		}
+	}
+
+	private boolean initClient() {
+		try {
 			this.client.setSoTimeout(60000);
 			this.cis = this.client.getInputStream();
 			this.cos = this.client.getOutputStream();
+			return true;
 		} catch (IOException e) {
-			System.out.println("³õÊ¼»¯IOÊ§°Ü.");
-			this.closeIO();
-			return;
+			System.out.println("åˆå§‹åŒ–IOå¤±è´¥.");
+			return false;
 		}
-		/*---------------------------------------------------*/
+	}
+
+	private boolean initAgent() {
 		try {
 			this.agent = new Socket("127.0.0.1", this.port);
 			this.agent.setSoTimeout(60000);
 			this.ais = this.agent.getInputStream();
 			this.aos = this.agent.getOutputStream();
+			return true;
 		} catch (IOException e) {
-			System.out.println("Á¬½Ó´úÀí·şÎñÆ÷Ê§°Ü.");
-			this.closeIO();
-			return;
+			System.out.println("è¿æ¥ä»£ç†æœåŠ¡å™¨å¤±è´¥.");
+			return false;
 		}
-		/*---------------------------------------------------*/
-		try {
-			this.header = this.readHeader();
-		} catch (IOException e) {
-			System.out.println("read headerÊ§°Ü.");
-		} finally {
-			if (this.header == null) {
-				System.out.println("header == null");
-				this.closeIO();
-				return;
-			}
+	}
+
+	private boolean readHeader() {
+		if ((this.header = readHeader(this.cis)) == null) {
+			System.out.println("header == null");
+			return false;
 		}
-		/*---------------------------------------------------*/
+		return true;
+	}
+
+	private boolean writeHeader() {
 		try {
 			byte[] bytes = this.header.getBytes();
 			this.writeCTA(bytes, 0, bytes.length);
+			return true;
 		} catch (IOException e) {
-			System.out.println("write headerÊ§°Ü.");
-			this.closeIO();
-			return;
+			System.out.println("write headerå¤±è´¥.");
+			return false;
 		}
-		/*---------------------------------------------------*/
-		ApiResponse patch = ApiResponseFactory.get(this.header.trim());
-		if (patch != null) patch.response(this);
-		else this.handle();
-		/*---------------------------------------------------*/
+	}
+
+	private void deal() {
+		UnaryOperator<ApiResponse> getPatch = value -> value != null ? value : this;
+		ApiResponse patch = getPatch.apply(ApiResponse.get(this.header.trim()));
+		patch.response(this);
+
 		try {
 			this.count.await();
 		} catch (InterruptedException e) {
 			System.out.println("waitTransfer() falied.");
-		} finally {
-			if (patch != null) {
-				Thread thread = new Thread(() -> patch.deal(this.response.toByteArray()));
-				thread.setDaemon(true);
-				thread.start();
-			}
-			this.closeIO();
 		}
+
+		patch.deal(this.response.toByteArray());
 	}
 
 	/*-------------------------------------------------*/
-	private String readHeader() throws IOException {
+	private static String readHeader(InputStream cis) {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			int b;
 
 			do {
 				if (baos.size() > 1000) return null;
-				b = this.cis.read();
+				b = cis.read();
 				baos.write(b);
 			} while (b != '\n');
 
 			return baos.toString();
+		} catch (IOException e) {
+			return null;
 		}
 	}
 
 	private void closeIO() {
-		this.closeIO(this.cis);
-		this.closeIO(this.cos);
-		this.closeIO(this.client);
+		Transfer.closeIO(this.cis);
+		Transfer.closeIO(this.cos);
+		Transfer.closeIO(this.client);
 
-		this.closeIO(this.request);
-		this.closeIO(this.response);
+		Transfer.closeIO(this.request);
+		Transfer.closeIO(this.response);
 
-		this.closeIO(this.ais);
-		this.closeIO(this.aos);
-		this.closeIO(this.agent);
+		Transfer.closeIO(this.ais);
+		Transfer.closeIO(this.aos);
+		Transfer.closeIO(this.agent);
 	}
 
-	private void closeIO(Closeable io) {
+	private static void closeIO(Closeable io) {
 		if (io != null) {
 			try {
 				io.close();
 			} catch (IOException e) {
-				System.out.println("closeIO() ´íÎó.");
+				System.out.println("closeIO() é”™è¯¯.");
 				e.printStackTrace();
 			}
 		}
@@ -136,7 +149,7 @@ public class Transfer extends Thread {
 				this.writeATC(buffer, 0, len);
 			}
 		} catch (IOException e) {
-			System.out.println("a to c ´íÎó:" + this.header.trim());
+			System.out.println("a â†’ c é”™è¯¯:" + this.header.trim());
 		} finally {
 			this.countDown();
 		}
@@ -150,10 +163,19 @@ public class Transfer extends Thread {
 				this.writeCTA(buffer, 0, len);
 			}
 		} catch (IOException e) {
-			System.out.println("c to a ´íÎó:" + this.header.trim());
+			System.out.println("c â†’ a é”™è¯¯:" + this.header.trim());
 		} finally {
 			this.countDown();
 		}
+	}
+
+	@Override
+	public void deal(byte[] bytes) {}
+
+	@Override
+	public void response(Transfer transfer) {
+		new Thread(this::clientToAgent).start();
+		new Thread(this::agentToClient).start();
 	}
 
 	/*-----------------------------------------------------------*/
@@ -176,11 +198,6 @@ public class Transfer extends Thread {
 
 	public int readATC(byte[] buffer) throws IOException {
 		return this.ais.read(buffer);
-	}
-
-	public void handle() {
-		new Thread(() -> this.clientToAgent()).start();
-		new Thread(() -> this.agentToClient()).start();
 	}
 
 	public void countDown() {

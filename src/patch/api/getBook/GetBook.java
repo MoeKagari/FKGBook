@@ -1,11 +1,15 @@
 package patch.api.getBook;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
-import gui.GuiConfig;
+import org.apache.commons.io.FileUtils;
+
+import fkg.gui.AppConfig;
 import patch.Transfer;
 import patch.api.ApiResponse;
+import tool.HTTPUtils;
 import tool.ZLibUtils;
 
 public class GetBook implements ApiResponse {
@@ -13,13 +17,13 @@ public class GetBook implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		if (GuiConfig.patch() == false) {
-			transfer.handle();
+		if (AppConfig.patch() == false) {
+			transfer.response(transfer);
 			return;
 		}
 
-		if (GuiConfig.isAllCG() == false) {
-			transfer.handle();
+		if (AppConfig.isAllCG() == false) {
+			transfer.response(transfer);
 			return;
 		}
 
@@ -30,7 +34,7 @@ public class GetBook implements ApiResponse {
 				body = ZLibUtils.compress(body);
 				transfer.writeATC(body, 0, body.length);
 			} catch (IOException e) {
-				System.out.println("getBook() ����");
+				System.out.println("getBook() 错误");
 			} finally {
 				transfer.countDown();
 				transfer.countDown();
@@ -39,6 +43,24 @@ public class GetBook implements ApiResponse {
 	}
 
 	@Override
-	public void deal(byte[] bytes) {}
+	public void deal(byte[] bytes) {
+		byte[] body = HTTPUtils.getBody(bytes, new String(HTTPUtils.getHeader(bytes)).contains("chunked"));
+		if (body == null) {
+			System.out.println("getBody()错误 in GetMaster.");
+			return;
+		}
+
+		body = ZLibUtils.decompress(body);
+		if (body == null) {
+			System.out.println("解压错误 in GetMaster.");
+			return;
+		}
+
+		try {
+			FileUtils.writeByteArrayToFile(new File("getBook.data"), Base64.getDecoder().decode(body));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

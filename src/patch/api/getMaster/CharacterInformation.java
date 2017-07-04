@@ -5,91 +5,91 @@ public class CharacterInformation implements GameData {
 
 	int cid1, cid2;
 	/**
-	 * ¿ÆÄ¿,masterCharacterCategory
+	 * ç§‘ç›®,masterCharacterCategory
 	 */
 	int category;
 	/**
-	 * ¹ú¼Ò<br>
-	 * if 0£¬ÎŞ¹ú¼ÒËùÊô<br>
-	 * if 1,¥¦¥£¥ó¥¿©`¥í©`¥º<br>
-	 * if 2,¥Ğ¥Ê¥Ê¥ª©`¥·¥ã¥ó<br>
-	 * if 3,¥Ö¥í¥Ã¥µ¥à¥Ò¥ë<br>
-	 * if 4,¥Ù¥ë¥¬¥â¥Ã¥È¥Ğ¥ì©`<br>
-	 * if 5,¥ê¥ê¥£¥¦¥Ã¥É
+	 * å›½å®¶<br>
+	 * if 0ï¼Œæ— å›½å®¶æ‰€å±<br>
+	 * if 1,ã‚¦ã‚£ãƒ³ã‚¿ãƒ¼ãƒ­ãƒ¼ã‚º<br>
+	 * if 2,ãƒãƒŠãƒŠã‚ªãƒ¼ã‚·ãƒ£ãƒ³<br>
+	 * if 3,ãƒ–ãƒ­ãƒƒã‚µãƒ ãƒ’ãƒ«<br>
+	 * if 4,ãƒ™ãƒ«ã‚¬ãƒ¢ãƒƒãƒˆãƒãƒ¬ãƒ¼<br>
+	 * if 5,ãƒªãƒªã‚£ã‚¦ãƒƒãƒ‰
 	 */
 	int country;
 	int e;// ?????????
 	/**
-	 * »¨Ãû£¬²»Í¬ÓÚ½ÇÉ«Ãû
+	 * èŠ±åï¼Œä¸åŒäºè§’è‰²å
 	 */
 	String flower_name;
 	String characterExplain;// ???????????
 	/**
-	 * Ï¡ÓĞ¶È
+	 * ç¨€æœ‰åº¦
 	 */
 	int rarity;
 	/**
-	 * ¹¥»÷ÊôĞÔ<br>
-	 * if 1,Õ¶ÊôĞÔ<br>
-	 * if 2,´òÊôĞÔ<br>
-	 * if 3,Í»ÊôĞÔ<br>
-	 * if 4,Ä§ÊôĞÔ<br>
-	 * if 5,ÎŞÊôĞÔ
+	 * æ”»å‡»å±æ€§<br>
+	 * if 1,æ–©å±æ€§<br>
+	 * if 2,æ‰“å±æ€§<br>
+	 * if 3,çªå±æ€§<br>
+	 * if 4,é­”å±æ€§<br>
+	 * if 5,æ— å±æ€§
 	 */
 	int attackAttribute;
 	String j;// ????????????
 	/**
-	 * ±»¶¯¼¼ÄÜ1£¬±»¶¯¼¼ÄÜ2£¬Ö÷¶¯¼¼ÄÜ CharacterLeaderSkill,CharacterLeaderSkill,CharacterSkill
+	 * è¢«åŠ¨æŠ€èƒ½1ï¼Œè¢«åŠ¨æŠ€èƒ½2ï¼Œä¸»åŠ¨æŠ€èƒ½ CharacterLeaderSkill,CharacterLeaderSkill,CharacterSkill
 	 */
 	public int passiveSkill1, passiveSkill2, activeSkill;
 	/**
-	 * all 0,³ı¿ª5ÖÖÊôĞÔµÄ¾¨Óã·ÉÍ§
+	 * all 0,é™¤å¼€5ç§å±æ€§çš„é²¸é±¼é£è‰‡
 	 */
-	String n;// ¾¨ÓãÏà¹Ø
-	String o;//ÓÎÏ·ÖĞÎ´ÓÃ
+	String n;// é²¸é±¼ç›¸å…³
+	String o;//æ¸¸æˆä¸­æœªç”¨
 	int minLevelHP, maxLevelHP;
 	int minLevelAttack, maxLevelAttack;
 	int minLevelDefense, maxLevelDefense;
 	int minLevelMove, maxLevelMove;
 	/**
 	 * x,y,z<br>
-	 * ÈıÖÖÁéÊŞ·Ö±ğÔö¼ÓµÄHP£¬¹¥»÷Á¦£¬·ÀÓùÉÏÏŞÖµ4000£¬1000£¬400<br>
-	 * Ö»¶ÔÓÚ½ÇÉ«¶øÑÔ£¬¼´isCharacter == 1<br>
+	 * ä¸‰ç§çµå…½åˆ†åˆ«å¢åŠ çš„HPï¼Œæ”»å‡»åŠ›ï¼Œé˜²å¾¡ä¸Šé™å€¼4000ï¼Œ1000ï¼Œ400<br>
+	 * åªå¯¹äºè§’è‰²è€Œè¨€ï¼Œå³isCharacter == 1<br>
 	 */
 	String x, y, z;
 	/**
-	 * ³öÊÛ»ñµÃµÄ½ğ±ÒÖµ
+	 * å‡ºå”®è·å¾—çš„é‡‘å¸å€¼
 	 */
 	int worthGold;
 	/**
-	 * masterCharacterLevel,µÚ¶şÁĞ<br>
-	 * Éı¼¶¾­Ñé£¬±»ºÏ³É¾­Ñé<br>
-	 * 1£¬3£¬5£¬7£¬9£¬·Ö±ğÎª2£¬3£¬4£¬5£¬6ĞÇÎ´½ø»¯<br>
-	 * 2£¬4£¬6£¬8£¬10£¬·Ö±ğÎª2£¬3£¬4£¬5£¬6ĞÇ½ø»¯<br>
-	 * 11£¬12£¬·Ö±ğÎª5£¬6ĞÇ¿ª»¨<br>
-	 * 101£¬5ËêÇ¿»¯ÁéºÍ3ÖÖÁéÊŞ¡¢»î¶¯½ÇÉ«¼¼»¨<br>
-	 * 102£¬20ËêÇ¿»¯Áé¡¢»î¶¯½ÇÉ«×°»¨<br>
-	 * 103£¬100ËêÇ¿»¯Áé<br>
-	 * 201£¬È«²¿½ø»¯Áú<br>
-	 * 202£¬ÎŞ<br>
-	 * 300£¬5ĞÇ×°»¨¡¢6ĞÇ×°»¨¡¢½á¾§½»»»µÄ4ÖÖ¼¼»¨<br>
-	 * 400£¬¿ª»¨²ÄÁÏ<br>
-	 * 203£¬5ÖÖÊôĞÔ¾¨Óã·ÉÍ§
+	 * masterCharacterLevel,ç¬¬äºŒåˆ—<br>
+	 * å‡çº§ç»éªŒï¼Œè¢«åˆæˆç»éªŒ<br>
+	 * 1ï¼Œ3ï¼Œ5ï¼Œ7ï¼Œ9ï¼Œåˆ†åˆ«ä¸º2ï¼Œ3ï¼Œ4ï¼Œ5ï¼Œ6æ˜Ÿæœªè¿›åŒ–<br>
+	 * 2ï¼Œ4ï¼Œ6ï¼Œ8ï¼Œ10ï¼Œåˆ†åˆ«ä¸º2ï¼Œ3ï¼Œ4ï¼Œ5ï¼Œ6æ˜Ÿè¿›åŒ–<br>
+	 * 11ï¼Œ12ï¼Œåˆ†åˆ«ä¸º5ï¼Œ6æ˜Ÿå¼€èŠ±<br>
+	 * 101ï¼Œ5å²å¼ºåŒ–çµå’Œ3ç§çµå…½ã€æ´»åŠ¨è§’è‰²æŠ€èŠ±<br>
+	 * 102ï¼Œ20å²å¼ºåŒ–çµã€æ´»åŠ¨è§’è‰²è£…èŠ±<br>
+	 * 103ï¼Œ100å²å¼ºåŒ–çµ<br>
+	 * 201ï¼Œå…¨éƒ¨è¿›åŒ–é¾™<br>
+	 * 202ï¼Œæ— <br>
+	 * 300ï¼Œ5æ˜Ÿè£…èŠ±ã€6æ˜Ÿè£…èŠ±ã€ç»“æ™¶äº¤æ¢çš„4ç§æŠ€èŠ±<br>
+	 * 400ï¼Œå¼€èŠ±ææ–™<br>
+	 * 203ï¼Œ5ç§å±æ€§é²¸é±¼é£è‰‡
 	 */
 	String ab;
 	/**
-	 * ½ö¶ÔÓÚisCharacter == 1 ¶øÑÔ<br>
-	 * ½ÇÉ«ĞòºÅ
+	 * ä»…å¯¹äº åŸå§‹è§’è‰² è€Œè¨€<br>
+	 * è§’è‰²åºå·
 	 */
 	String ac;
 	/**
-	 * ÊÇ·ñÎªÎ´½ø»¯½ÇÉ«<br>
-	 * if 0£¬ÎªÎ´½ø»¯½ÇÉ«
+	 * æ˜¯å¦ä¸º åŸå§‹è§’è‰² <br>
+	 * if 0ï¼Œä¸º åŸå§‹è§’è‰² 
 	 */
 	int beforeEvolution;
 	/**
-	 * if 0,ÌØÊâ½ÇÉ«,Èç:½ø»¯Áú¡¢¿ª»¨²ÄÁÏ¡¢ÈıÁéÊŞ,etc<br>
-	 * if 1,½ÇÉ«
+	 * if 0,ç‰¹æ®Šè§’è‰²,å¦‚:è¿›åŒ–é¾™ã€å¼€èŠ±ææ–™ã€ä¸‰çµå…½,etc<br>
+	 * if 1,è§’è‰²
 	 */
 	int isCharacter;
 	int favorHP, favorAttack, favorDefense;
@@ -98,53 +98,55 @@ public class CharacterInformation implements GameData {
 	 */
 	private int bid;
 	/**
-	 * if 1,Ô­Ê¼½ÇÉ«<br>
-	 * if 2,½ø»¯½ÇÉ«<br>
-	 * if 3,¿ª»¨½ÇÉ«
+	 * if 1,åŸå§‹è§’è‰²<br>
+	 * if 2,è¿›åŒ–è§’è‰²<br>
+	 * if 3,å¼€èŠ±è§’è‰²
 	 */
 	int oeb;
 	/**
-	 * ÏÖºÍ isCharacter Ò»Ñù<br>
-	 * ÏÖºÍ ap Ò»Ñù
+	 * ç°å’Œ isCharacter ä¸€æ ·<br>
+	 * ç°å’Œ ap ä¸€æ ·
 	 */
 	String ak;
 	/**
-	 * ¶ÔÓÚ½ÇÉ«¶øÑÔ<br>
-	 * 0£¬1£¬2£¬3£¬4·Ö±ğÎª2£¬3£¬4£¬5£¬6ĞÇ<br>
-	 * ¶ÔÓÚ·Ç½ÇÉ«¶øÑÔ, Ö»ÓĞÒ»¸öÖµ£º0
+	 * å¯¹äºè§’è‰²è€Œè¨€<br>
+	 * 0ï¼Œ1ï¼Œ2ï¼Œ3ï¼Œ4åˆ†åˆ«ä¸º2ï¼Œ3ï¼Œ4ï¼Œ5ï¼Œ6æ˜Ÿ<br>
+	 * å¯¹äºéè§’è‰²è€Œè¨€, åªæœ‰ä¸€ä¸ªå€¼ï¼š0
 	 */
 	String al;
 	int secondFavorHP, secondFavorAttack, secondFavorDefense;
 	/**
-	 * ÏÖºÍ isCharacter Ò»Ñù<br>
-	 * ÏÖºÍ ak Ò»Ñù
+	 * ç°å’Œ isCharacter ä¸€æ ·<br>
+	 * ç°å’Œ ak ä¸€æ ·
 	 */
 	String ap;
 	/**
-	 * ¿ª»¨ĞòºÅ£¬´Ó1¿ªÊ¼,½ö¶ÔÓÚ½ø»¯½ÇÉ«£¬²¢ÇÒÆä hasBloom == 1
+	 * å¼€èŠ±åºå·ï¼Œä»1å¼€å§‹,ä»…å¯¹äºè¿›åŒ–è§’è‰²ï¼Œå¹¶ä¸”å…¶ hasBloom == 1
 	 */
 	int bloomNumber;
 	/**
-	 * ÊÇ·ñÎª¿ª»¨½ÇÉ«<br>
-	 * if 1£¬Îª¿ª»¨½ÇÉ«<br>
-	 * if 0£¬²»Îª¿ª»¨½ÇÉ«
+	 * æ˜¯å¦ä¸ºå¼€èŠ±è§’è‰²<br>
+	 * if 1ï¼Œä¸ºå¼€èŠ±è§’è‰²<br>
+	 * if 0ï¼Œä¸ä¸ºå¼€èŠ±è§’è‰²
 	 */
 	String ar;
 	/**
-	 * 1ÎªÓĞ¿ª»¨<br>
-	 * 0ÎªÎŞ¿ª»¨<br>
-	 * ½ö¶ÔÓÚ½ø»¯É«É«¶øÑÔ£¬¼´ oeb == 2
+	 * 1ä¸ºæœ‰å¼€èŠ±<br>
+	 * 0ä¸ºæ— å¼€èŠ±<br>
+	 * ä»…å¯¹äºè¿›åŒ–è‰²è‰²è€Œè¨€ï¼Œå³ oeb == 2
 	 */
 	int hasBloom;
 	/**
-	 * ½ÇÉ«Ãû£¬²»Í¬ÓÚ»¨Ãû
+	 * è§’è‰²åï¼Œä¸åŒäºèŠ±å
 	 */
 	String character_name;
+	int kariBloom;
+	String av;
 	String time1, time2;
 	/**
 	 * all 0, no use?
 	 */
-	String aw;
+	String ay;
 	String version;
 
 	public CharacterInformation(String source) {
@@ -185,7 +187,7 @@ public class CharacterInformation implements GameData {
 		this.favorHP = Integer.parseInt(info[index++]);
 		this.favorAttack = Integer.parseInt(info[index++]);
 		this.favorDefense = Integer.parseInt(info[index++]);
-		this.bid = (Integer.parseInt(info[index++]));
+		this.bid = Integer.parseInt(info[index++]);
 		this.oeb = Integer.parseInt(info[index++]);
 		this.ak = info[index++];
 		this.al = info[index++];
@@ -197,9 +199,11 @@ public class CharacterInformation implements GameData {
 		this.ar = info[index++];
 		this.hasBloom = Integer.parseInt(info[index++]);
 		this.character_name = info[index++];
+		this.kariBloom = Integer.parseInt(info[index++]);
+		this.av = info[index++];
 		this.time1 = info[index++];
 		this.time2 = info[index++];
-		this.aw = info[index++];
+		this.ay = info[index++];
 		this.version = info[index++];
 	}
 
@@ -217,7 +221,7 @@ public class CharacterInformation implements GameData {
 	}
 
 	public static GameData[] get() {
-		return GameData.get(key, source -> new CharacterInformation(source));
+		return GameData.get(key, CharacterInformation::new);
 	}
 
 	/*----------------------------------------------------------*/
@@ -231,7 +235,7 @@ public class CharacterInformation implements GameData {
 	}
 
 	public String getAttackAttribute() {
-		final String[] aa = new String[] { "Õ¶", "´ò", "Í»", "Ä§", "ÎŞ" };
+		final String[] aa = new String[] { "æ–©", "æ‰“", "çª", "é­”", "æ— " };
 		return aa[this.attackAttribute - 1];
 	}
 
@@ -249,6 +253,10 @@ public class CharacterInformation implements GameData {
 
 	public boolean isCharacter() {
 		return this.isCharacter == 1;
+	}
+
+	public boolean getKariBloom() {
+		return this.kariBloom == 1;
 	}
 
 	public GameData[] getSkill(GameData[] css, GameData[] clss) {
@@ -290,5 +298,4 @@ public class CharacterInformation implements GameData {
 	public int getBid() {
 		return this.bid;
 	}
-
 }

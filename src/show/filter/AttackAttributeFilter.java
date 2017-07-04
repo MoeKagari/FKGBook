@@ -1,20 +1,24 @@
 package show.filter;
 
-import show.CharacterData;
+import show.data.CharacterData;
 
 public class AttackAttributeFilter implements Filter {
-	public static final String[] STRING_ATTRIBUTE = { "��", "ն", "��", "ͻ", "ħ" };
-	private static final int[] ATTRIBUTE = { 0, 1, 2, 3, 4 };
+	public static final StringInteger[] SIS = {//
+			new StringInteger("无", 0),//
+			new StringInteger("斩", 1),//
+			new StringInteger("打", 2),//
+			new StringInteger("突", 3),//
+			new StringInteger("魔", 4),//
+	};
 
 	private final int attribute;
 
 	public AttackAttributeFilter(int index) {
-		this.attribute = ATTRIBUTE[index];
+		this.attribute = SIS[index].getInteger();
 	}
 
 	@Override
 	public boolean filter(CharacterData cd) {
-		return attribute == 0 || attribute == cd.getAttackAttributeNumber();
+		return this.attribute == 0 || this.attribute == cd.ci.getAttackAttributeNumber();
 	}
-
 }

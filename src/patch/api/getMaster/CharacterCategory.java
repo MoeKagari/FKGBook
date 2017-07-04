@@ -5,7 +5,7 @@ public class CharacterCategory implements GameData {
 	
 	int id;
 	/**
-	 * 花的科目
+	 * 鑺辩殑绉戠洰
 	 */
 	String family;
 	int isCharacter;

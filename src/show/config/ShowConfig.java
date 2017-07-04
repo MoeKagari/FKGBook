@@ -3,9 +3,9 @@ package show.config;
 import tool.MD5;
 
 public class ShowConfig {
-	public static final String ID_CHINESENAME = "resources\\ÃÀÉÙÅ®»¨ÆïÊ¿½ÇÉ«ÖĞÎÄÃû.csv";
-	public static final String CHARACTER_INFORMATION = "resources\\ÃÀÉÙÅ®»¨ÆïÊ¿½ÇÉ«ÊôĞÔ.csv";
-	public static final String CHARACTER_SKILLTYPE = "resources\\ÃÀÉÙÅ®»¨ÆïÊ¿½ÇÉ«¼¼ÄÜÀàĞÍ.csv";
+	public static final String ID_CHINESENAME = "resources\\ç¾å°‘å¥³èŠ±éª‘å£«è§’è‰²ä¸­æ–‡å.csv";
+	public static final String CHARACTER_INFORMATION = "resources\\ç¾å°‘å¥³èŠ±éª‘å£«è§’è‰²å±æ€§.csv";
+	public static final String CHARACTER_SKILLTYPE = "resources\\ç¾å°‘å¥³èŠ±éª‘å£«è§’è‰²æŠ€èƒ½ç±»å‹.csv";
 	public static final String SKILL_PANEL_BACKGROUND = "resources\\skill_background";
 
 	private static final String profix = "http://dugrqaqinbtcq.cloudfront.net/product/";
@@ -15,8 +15,6 @@ public class ShowConfig {
 	private static final String CHARACTER_STAND_NETPATH = profix + "images/character/s/";
 	public static final String CHARACTER_STAND_S = "resources\\character_image\\stand_s";
 	private static final String CHARACTER_STAND_S_NETPATH = profix + "images/character/s/";
-
-	public static final String CHARACTER_VALENTINE = "resources\\character_image\\valentine\\card";
 
 	public static String getCharacterIconNetpath(int id) {
 		return CHARACTER_ICON_NETPATH + MD5.getMD5("icon_s_" + id) + ".bin";

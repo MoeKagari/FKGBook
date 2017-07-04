@@ -51,7 +51,7 @@ class CacheInformation {
 		path.add(new CacheInformation("product/images/character/i/", "icon_l_" + id, "png"));
 		path.add(new CacheInformation("product/images/character/s/", "stand_s_" + id, "png"));
 //		path.add(new CacheInformation("product/voice/c/" + String.format("%06d", id) + "/", "fkg_skillattack001", "mp3"));
-//		//对于进化前ID
+//		//瀵逛簬杩涘寲鍓岻D
 //		path.add(new CacheInformation("product/images/character/s/", "chibi_" + id, "swf"));
 //
 //		path.add(new CacheInformation("product/images/character/s/", "home_" + id, "png"));

@@ -3,18 +3,12 @@ package patch.other.unpack;
 import java.io.File;
 import java.io.IOException;
 
-import tool.FileUtil;
+import org.apache.commons.io.FileUtils;
+
 import tool.ZLibUtils;
 
 class ZlibUnpacker {
-	/**
-	 * 
-	 * @param file
-	 *            the file or directory need to decompress
-	 * @param target
-	 *            the target directory,if null,decompress to ..\\unpack
-	 * @return the thread going to decompress file,please start thread
-	 */
+
 	public static Thread getThread(File file, File target) {
 		return new Thread() {
 			@Override
@@ -28,7 +22,6 @@ class ZlibUnpacker {
 			}
 		};
 	}
-	/*----------------------------------*/
 
 	private static void unpackDirectory(String dir, File file) {
 		for (File f : file.listFiles()) {
@@ -38,23 +31,31 @@ class ZlibUnpacker {
 	}
 
 	private static void unpackFile(String filename, File file) {
-		byte[] bytes = FileUtil.read(file);
-		bytes = ZLibUtils.decompress(bytes);
-		if (bytes == null || bytes.length == 0) {
-			System.out.println("bytes == null");
-			return;
-		}
-
-		String header = FileUtil.getHeader(bytes);
-		String exten = FileUtil.getExten(header);
-		File newFile = new File(filename + "." + exten);
-
 		try {
-			FileUtil.create(newFile);
-			FileUtil.save(newFile, bytes);
+			byte[] bytes = FileUtils.readFileToByteArray(file);
+			bytes = ZLibUtils.decompress(bytes);
+
+			String header = String.format("%d%d", Byte.toUnsignedInt(bytes[0]), Byte.toUnsignedInt(bytes[1]));
+			String exten = getExten(header);
+			File newFile = new File(filename + "." + exten);
+			FileUtils.writeByteArrayToFile(newFile, bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private static String getExten(String header) {
+		switch (header) {
+			case "13780":
+				return "png";
+			case "6787":
+				return "swf";
+			case "7368":
+				return "mp3";
+			case "255216":
+				return "jpg";
+			default:
+				return "txt";
+		}
+	}
 }

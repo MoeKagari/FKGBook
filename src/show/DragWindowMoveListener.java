@@ -31,7 +31,10 @@ public class DragWindowMoveListener extends MouseAdapter {
 		if (this.allowDrag) {
 			this.closeWindow = false;
 			this.newLocation = e.getPoint();
-			this.window.setLocation((int) (this.window.getLocation().getX() + this.newLocation.getX() - this.oldLocation.getX()), (int) (this.window.getLocation().getY() + this.newLocation.getY() - this.oldLocation.getY()));
+			this.window.setLocation(//
+					(int) (this.window.getLocation().getX() + this.newLocation.getX() - this.oldLocation.getX()), //
+					(int) (this.window.getLocation().getY() + this.newLocation.getY() - this.oldLocation.getY())//
+			);
 		}
 	}
 

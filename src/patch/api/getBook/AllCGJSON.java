@@ -22,13 +22,13 @@ public class AllCGJSON {
 		ArrayList<Integer> sbid = new ArrayList<>();
 		/*---------------------------------------------*/
 		for (int id : new int[] {
-				// ÈıÁéÊŞ
+				// ä¸‰çµå…½
 				5000, 5010, 5020,
-				// Ç¿»¯Áé
+				// å¼ºåŒ–çµ
 				109913, 109914, 109915, 109916, 109917, 109918, 109919, 109920, 109921, 109922, 109923, 109924, 109925,
-				// ½ø»¯Áú
+				// è¿›åŒ–é¾™
 				109926, 109927, 109928, 109929, 109930, 109931, 109932, 109933, 109934, 109935, 109936,
-				// ¿ª»¨²ÄÁÏ
+				// å¼€èŠ±ææ–™
 				109949, 109950, 109951, 109952, 109953, 109954, 109955, 109956, 109957, 109958, 109959, 109960 })
 			cid.add(id);
 
@@ -122,7 +122,7 @@ public class AllCGJSON {
 		builder.add("resultCode", "0");
 		builder.add("buildVersion", "1.0.0");
 		builder.add("serverTime", getTime());
-		builder.add("version", "v1.76.0");
+		builder.add("version", "v1.114.0");
 		return ALLCGJSON = builder.build().toString();
 	}
 

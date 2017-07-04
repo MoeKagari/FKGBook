@@ -7,7 +7,7 @@ public class CharacterQuest implements GameData {
 	String name;
 	String c, d;
 	/**
-	 * 1,2,3,4À≥–Ú
+	 * 1,2,3,4È°∫Â∫è
 	 */
 	String e;
 	/**
@@ -17,9 +17,7 @@ public class CharacterQuest implements GameData {
 	int g;
 	int cid;
 	int bid;
-	/**
-	 * all 2 , the kind number of story?
-	 */
+
 	int j;
 	int needCharacterLevel;
 	int l;

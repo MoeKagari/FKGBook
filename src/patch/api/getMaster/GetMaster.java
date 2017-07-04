@@ -1,15 +1,17 @@
 package patch.api.getMaster;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.Base64;
 
 import javax.json.Json;
 import javax.json.JsonString;
 
+import org.apache.commons.io.FileUtils;
+
 import patch.Transfer;
 import patch.api.ApiResponse;
-import tool.FileUtil;
-import tool.HTTPUtil;
+import tool.HTTPUtils;
 import tool.ZLibUtils;
 
 public class GetMaster implements ApiResponse {
@@ -18,30 +20,33 @@ public class GetMaster implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		transfer.handle();
+		transfer.response(transfer);
 	}
 
 	@Override
 	public void deal(byte[] bytes) {
-		byte[] body = HTTPUtil.getBody(bytes, new String(HTTPUtil.getHeader(bytes)).contains("chunked"));
+		byte[] body = HTTPUtils.getBody(bytes, new String(HTTPUtils.getHeader(bytes)).contains("chunked"));
 		if (body == null) {
-			System.out.println("getBody()´íÎó in GetMaster.");
+			System.out.println("getBody()é”™è¯¯ in GetMaster.");
 			return;
 		}
 
 		body = ZLibUtils.decompress(body);
 		if (body == null) {
-			System.out.println("½âÑ¹´íÎó in GetMaster.");
+			System.out.println("è§£åŽ‹é”™è¯¯ in GetMaster.");
 			return;
 		}
 
 		Json.createReader(new ByteArrayInputStream(body)).readObject().forEach((key, value) -> {
 			try {
 				if (value instanceof JsonString) {
-					if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key) || CharacterBook.key.equals(key))//
+					//if (CharacterInformation.key.equals(key) || CharacterSkill.key.equals(key) || CharacterLeaderSkill.key.equals(key) || CharacterBook.key.equals(key))//
 					{
-						byte[] data = Base64.getDecoder().decode(((JsonString) value).getString().getBytes("utf-8"));
-						FileUtil.save(dir + "\\" + key + ".csv", data);
+						byte[] data = ((JsonString) value).getString().getBytes("utf-8");
+						if ("version".equals(key) == false) {
+							data = Base64.getDecoder().decode(data);
+						}
+						FileUtils.writeByteArrayToFile(new File(dir + "\\" + key + ".csv"), data);
 					}
 				}
 			} catch (Exception e) {

@@ -4,70 +4,143 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.zip.Inflater;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
+import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
+
+import patch.api.GetTurningCardSheet;
 import tool.Downloader;
-import tool.FileUtil;
 
 public class Puzzle {
-
-	static Set<String> hints = new TreeSet<>();
+	private static int proxyPort = -1;
+	private static final Map<String, BufferedImage> CACHEIMAGES = new HashMap<>();
 
 	public static void main(String[] args) {
-		for (int i = 1; i <= 4; i++) {
-			deal(i + ".json");
-			for (int j = 1; j <= 11; j++) {
-				combineImage(i, j);
-			}
-		}
-		for (int i = 1; i <= 4; i++) {
-			for (int j = 1; j <= 6; j++) {
-				combineImage(9, i, j);
+		if (args.length > 0) {
+			try {
+				proxyPort = Integer.parseInt(args[0]);
+			} catch (Exception e) {
+				System.out.println("‰ª£ÁêÜÁ´ØÂè£Âè™ËÉΩÂê´ÊúâÊï∞Â≠ó");
 			}
 		}
 
-		hints.forEach(System.out::println);
-	}
-
-	private static void combineImage(int root, int i, int j) {
-		int r = 3, c = 3;
-
-		String dir = root + "\\" + i;
-		int space = 10;
-		BufferedImage base = new BufferedImage((space + 100) * c + space, (space + 100) * r + space, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = base.createGraphics();
-
-		int count = 0;
-		for (int s = 0; s < r; s++) {
-			for (int t = 0; t < c; t++) {
-				count++;
-				File file = new File(dir + "\\" + j + "\\" + String.format("%02d", count) + ".png");
-				try {
-					g.drawImage(ImageIO.read(file), space + (space + 100) * t, space + (space + 100) * s, null);
-				} catch (IOException e) {
-					System.out.println(file.getPath());
-				}
-			}
+		File file = new File(GetTurningCardSheet.filename);
+		if (file.exists() == false) {
+			JOptionPane.showMessageDialog(null, "Êó†Êñá‰ª∂");
+			return;
 		}
+
 		try {
-			ImageIO.write(base, "png", FileUtil.create(dir + "\\" + String.format("%02d", j) + ".png"));
-		} catch (IOException e) {
+			byte[] bytes = FileUtils.readFileToByteArray(new File(GetTurningCardSheet.filename));
+			deal(bytes);
+			JOptionPane.showMessageDialog(null, "ÂÆåÊàê");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void combineImage(int i, int j) {
-		int[] rc = getRowCol(j);
+	public static byte[] decompress(byte[] data) {
+		try (ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)) {
+			Inflater decompresser = new Inflater();
+			decompresser.reset();
+			decompresser.setInput(data);
+
+			byte[] buf = new byte[1024];
+			while (!decompresser.finished()) {
+				int i = decompresser.inflate(buf);
+				o.write(buf, 0, i);
+			}
+			decompresser.end();
+
+			return o.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return data;
+		}
+	}
+
+	public static int[] getRowCol(int size) {
+		switch (size) {
+			case 9:
+				return new int[] { 3, 3, 0 };
+			case 12:
+				return new int[] { 3, 4, 0 };
+			case 16:
+				return new int[] { 4, 4, 0 };
+			case 20:
+				return new int[] { 4, 5, 0 };
+			case 26:
+				return new int[] { 5, 6, 4 };
+			case 32:
+				return new int[] { 6, 6, 4 };
+			case 40:
+				return new int[] { 5, 8, 0 };
+			case 56:
+				return new int[] { 7, 8, 0 };
+			case 63:
+				return new int[] { 8, 8, 1 };
+			case 64:
+				return new int[] { 8, 8, 0 };
+			default:
+				return null;
+		}
+	}
+
+	public static void deal(byte[] source) {
+		ValueType type = Json.createReader(new ByteArrayInputStream(Json.createReader(new ByteArrayInputStream(source)).readObject().getJsonArray("turningCardSheetList").toString().getBytes())).read().getValueType();
+		if (type != ValueType.ARRAY) {
+			System.out.println(type);
+			return;
+		}
+		JsonArray ja = Json.createReader(new ByteArrayInputStream(source)).readObject().getJsonArray("turningCardSheetList");
+		Card[] cards = new Card[ja.size()];
+		for (int i = 0; i < ja.size(); i++) {
+			cards[i] = new Card(ja.getJsonObject(i));
+		}
+		long time = Calendar.getInstance().getTimeInMillis();
+		Json.createReader(new ByteArrayInputStream(source)).readObject().getJsonArray("turningCardSheetList").stream().//
+				map(Card::new).collect(Collectors.groupingBy(o -> o.turningCardSheetGroupId)).forEach((turningCardSheetGroupId, turningCardSheetGroupIdResult) -> {
+					turningCardSheetGroupIdResult.stream().collect(Collectors.groupingBy(o -> o.sheetType)).forEach((sheetType, sheetTypeResult) -> {
+						sheetTypeResult.stream().collect(Collectors.groupingBy(o -> o.level)).forEach((level, levelResult) -> {
+							deal(levelResult, time + String.format("\\%d\\%02d\\%02d.png", turningCardSheetGroupId, sheetType, level));
+						});
+					});
+				});
+	}
+
+	public static void deal(List<Card> levelResult, String filename) {
+		List<BufferedImage> images = new ArrayList<>();
+		Collections.sort(levelResult, (a, b) -> Integer.compare(a.cardOrderNum, b.cardOrderNum));
+		levelResult.stream().map(Puzzle::downloadCard).forEach(images::add);
+
+		int[] rc = getRowCol(levelResult.size());
+		if (rc == null) {
+			System.out.println("Êñ∞Â∏ÉÂ±Ä: size = " + levelResult.size());
+			System.out.println(filename);
+			for (int i = 0; i < images.size(); i++) {
+				saveImage(new File(filename + "\\" + i + ".png"), images.get(i));
+			}
+			return;
+		}
 		int r = rc[0], c = rc[1];
 		int space = 10;
 		BufferedImage base = new BufferedImage((space + 100) * c + space, (space + 100) * r + space, BufferedImage.TYPE_INT_ARGB);
@@ -85,85 +158,56 @@ public class Puzzle {
 					if (s == r - 1 && t == c - 1) continue;
 				}
 
+				g.drawImage(images.get(count), space + (space + 100) * t, space + (space + 100) * s, null);
 				count++;
-				File file = new File(i + "\\" + j + "\\" + String.format("%02d", count) + ".png");
-				try {
-					g.drawImage(ImageIO.read(file), space + (space + 100) * t, space + (space + 100) * s, null);
-				} catch (IOException e) {
-					System.out.println(file.getPath());
-				}
 			}
 		}
-		try {
-			ImageIO.write(base, "png", FileUtil.create(i + "\\" + String.format("%02d", j) + ".png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		saveImage(new File(filename), base);
 	}
 
-	private static int[] getRowCol(int j) {
-		return new int[][] {//
-				{ 3, 3, 0 }, { 3, 4, 0 }, { 4, 4, 0 }, { 4, 5, 0 }, { 5, 6, 4 }, { 6, 6, 4 }, { 5, 8, 0 }, { 5, 8, 0 },//
-				{ 7, 8, 0 }, { 7, 8, 0 }, { 8, 8, 1 }, { 8, 8, 1 }, { 8, 8, 1 }, { 8, 8, 1 }, { 8, 8, 1 }, { 8, 8, 1 },//
-		}[j - 1];
-	}
-
-	public static void deal(String na) {
-		JsonObject json;
-		try {
-			json = Json.createReader(new FileInputStream(na)).readObject();
-		} catch (FileNotFoundException e) {
-			System.out.println(na);
-			return;
-		}
-
-		JsonArray ja = json.getJsonArray("turningCardSheetList");
-		Card[] cards = new Card[ja.size()];
-		for (int i = 0; i < ja.size(); i++) {
-			cards[i] = new Card(ja.getJsonObject(i));
-		}
-
-		for (Card card : cards) {
-			String filename = card.sheetType + "\\" + card.level + "\\" + String.format("%02d", card.cardOrderNum) + ".png";
-			if (card.turningCardSheetGroupId != 8) {
-				filename = card.turningCardSheetGroupId + "\\" + filename;
-			}
-			if (card.hintGroupId != 0) {
-				hints.add(card.turningCardItemRateGroupName);
-				filename = "hint\\" + filename;
-			}
-			if (card.textureName.startsWith("000001")) {//Ω±“
-				int amount = Integer.parseInt(card.turningCardItemRateGroupName.substring(0, card.turningCardItemRateGroupName.indexOf("\u30b4")));
-				BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-				Graphics g = image.createGraphics();
-				g.setFont(new Font(null, Font.PLAIN, 15));
-				g.drawString(amount + "Ω±“", 10, 50);
-				try {
-					ImageIO.write(image, "png", FileUtil.create(filename));
-				} catch (IOException e) {
-					e.printStackTrace();
+	private static BufferedImage downloadCard(Card card) {
+		if (card.textureName.startsWith("000001")) {//ÈáëÂ∏Å
+			int amount = Integer.parseInt(card.turningCardItemRateGroupName.substring(0, card.turningCardItemRateGroupName.indexOf("\u30b4")));
+			BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+			Graphics g = image.createGraphics();
+			g.setFont(new Font(null, Font.PLAIN, 15));
+			g.drawString(amount + "ÈáëÂ∏Å", 10, 50);
+			return image;
+		} else {
+			try {
+				String urlStr = "http://dugrqaqinbtcq.cloudfront.net/product/images/item/100x100/" + card.textureName;
+				BufferedImage image = CACHEIMAGES.get(urlStr);
+				if (image == null) {
+					byte[] bytes = Downloader.download(urlStr, proxyPort);
+					if (bytes == null) {
+						image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+					} else {
+						image = ImageIO.read(new ByteArrayInputStream(bytes));
+					}
 				}
-			} else {
-				if (new File(filename).exists() == false) {
-					byte[] bytes = Downloader.download("http://dugrqaqinbtcq.cloudfront.net/product/images/item/100x100/" + card.textureName);
-					if (bytes == null) System.out.println("bytes == null");
-					FileUtil.save(filename, bytes);
-				}
+				return image;
+			} catch (IOException e) {
+				return new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
 			}
 		}
 	}
 
 	public static class Card {
 		int id;//???
-		int turningCardSheetGroupId;//÷÷¿‡,∆’Õ®puzzle,∞¥ ±∫Û–¯ø™∑≈puzzle,Ãıº˛ø™∑≈puzzle......
-		int level;//µ⁄º∏πÿ
-		int sheetType;// 4÷÷£¨◊Ûœ¬Ω«»ÀŒÔ»•≤ªÕ¨
+		int turningCardSheetGroupId;//ÁßçÁ±ª,ÊôÆÔøΩ?ÔøΩpuzzle,ÊåâÊó∂ÂêéÁª≠ÔøΩ?Êîæpuzzle,Êù°‰ª∂ÔøΩ?Êîæpuzzle......
+		int level;//Á¨¨Âá†ÔøΩ?
+		int sheetType;// 4ÁßçÔºåÂ∑¶‰∏ãËßí‰∫∫Áâ©Âéª‰∏çÂêå
 		int turningCardItemRateGroupId;
 		String turningCardItemRateGroupName;
-		int cardOrderNum;//¥”◊ÛµΩ”“,¥”…œµΩœ¬µƒ±‡∫≈
-		String textureName;//ƒ⁄»›
-		boolean keyItemFlag;// «∑ÒŒ™keyitem,≤ª∑≠µΩµƒª∞,≤ªƒ‹Ω¯»Îœ¬“ªπÿ
-		int hintGroupId;//√ª ≤√¥”√,πÿº¸item◊Ûœ¬Ω«»ÀŒÔ∫Õ‹˘≤Àmotion≤ªÕ¨
+		int cardOrderNum;//‰ªéÂ∑¶Âà∞Âè≥,‰ªé‰∏äÂà∞‰∏ãÁöÑÁºñÔøΩ?
+		String textureName;//ÂÜÖÂÆπ
+		boolean keyItemFlag;//ÊòØÂê¶‰∏∫keyitem,‰∏çÁøªÂà∞ÁöÑÔøΩ?,‰∏çËÉΩËøõÂÖ•‰∏ã‰∏ÄÔøΩ?
+		int hintGroupId;//Ê≤°‰ªÄ‰πàÁî®,ÂÖ≥ÈîÆitemÂ∑¶‰∏ãËßí‰∫∫Áâ©ÂíåËç†Ëèúmotion‰∏çÂêå
+
+		public Card(JsonValue jo) {
+			this((JsonObject) jo);
+		}
 
 		public Card(JsonObject jo) {
 			this.id = jo.getInt("id");
@@ -186,8 +230,16 @@ public class Puzzle {
 		// "turningCardItemRateGroupName": "\u5f37\u5316\u970a\u9752\u306e\u30de\u30cb\u30e520\u624d x1",
 		// "cardOrderNum": 8,
 		// "textureName": "109918.png",
-		//"hintGroupId": 0,//2017.03.06–¬‘ˆ
+		//"hintGroupId": 0,//2017.03.06Êñ∞Â¢û
 		// "keyItemFlag": 0
 	}
 
+	private static void saveImage(File file, BufferedImage image) {
+		try {
+			file.getParentFile().getAbsoluteFile().mkdirs();
+			ImageIO.write(image, "png", file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

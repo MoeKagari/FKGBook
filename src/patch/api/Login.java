@@ -9,10 +9,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import gui.GuiConfig;
+import fkg.gui.AppConfig;
 import patch.Transfer;
-import tool.FileUtil;
-import tool.HTTPUtil;
+import tool.HTTPUtils;
 import tool.ZLibUtils;
 
 public class Login implements ApiResponse {
@@ -23,14 +22,13 @@ public class Login implements ApiResponse {
 
 	@Override
 	public void response(Transfer transfer) {
-		if (GuiConfig.patch() == false) {
-			transfer.handle();
+		if (AppConfig.patch() == false) {
+			transfer.response(transfer);
 			return;
 		}
 
-		Integer target = GuiConfig.getFutuanzhangID();
-		if (GuiConfig.isTihuan() == false || target == null) {
-			transfer.handle();
+		if (AppConfig.isTihuan() == false) {
+			transfer.response(transfer);
 			return;
 		}
 
@@ -42,7 +40,7 @@ public class Login implements ApiResponse {
 					transfer.writeCTA(buffer, 0, len);
 				}
 			} catch (IOException e) {
-				System.out.println("c to a ´íÎó:\n" + transfer.getHeader().trim());
+				System.out.println("c to a é”™è¯¯:\n" + transfer.getHeader().trim());
 				e.printStackTrace();
 			} finally {
 				transfer.countDown();
@@ -58,12 +56,12 @@ public class Login implements ApiResponse {
 				}
 
 				byte[] bytes = baos.toByteArray();
-				byte[] header = HTTPUtil.getHeader(bytes);
+				byte[] header = HTTPUtils.getHeader(bytes);
 				boolean chunked = new String(header).contains("chunked");
-				byte[] body = HTTPUtil.getBody(bytes, chunked);
+				byte[] body = HTTPUtils.getBody(bytes, chunked);
 				body = ZLibUtils.decompress(body);
 				body = Base64.getDecoder().decode(body);
-				body = patch(body, target);
+				body = patch(body, AppConfig.getFutuanzhangID());
 				body = Base64.getEncoder().encode(body);
 				body = ZLibUtils.compress(body);
 
@@ -80,12 +78,11 @@ public class Login implements ApiResponse {
 					}
 				} else {
 					byte[] newHeader = new String(header).replaceAll("\r\nContent-Length.+?\r\n", "\r\nContent-Length:" + body.length + "\r\n").getBytes();
-					FileUtil.save("aa", newHeader);
 					transfer.writeATC(newHeader, 0, newHeader.length);
 					transfer.writeATC(body, 0, body.length);
 				}
 			} catch (IOException e) {
-				System.out.println("a to c ´íÎó:\n" + transfer.getHeader().trim());
+				System.out.println("a to c é”™è¯¯:\n" + transfer.getHeader().trim());
 			} finally {
 				transfer.countDown();
 			}

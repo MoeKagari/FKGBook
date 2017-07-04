@@ -8,7 +8,7 @@ public class UnpackerUI {
 	private JFrame frame;
 
 	public UnpackerUI() {
-		frame = new JFrame("美少女花骑士解包");
+		frame = new JFrame("缇庡皯濂宠姳楠戝＋瑙ｅ寘");
 		
 		frame.setSize(600, 400);
 		frame.setResizable(false);

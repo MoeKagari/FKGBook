@@ -3,47 +3,56 @@ package show;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
 import show.config.ShowConfig;
+import show.data.CharacterData;
 import show.filter.AttackAttributeFilter;
 import show.filter.CountryFilter;
 import show.filter.Filter;
 
 @SuppressWarnings("serial")
 public class CharacterListTableModel extends AbstractTableModel {
-	private final ArrayList<ColumnManager> cms = this.initCMS();
-	private final ArrayList<CharacterData> cds = new ArrayList<>();// ´æ´¢µ±Ç°tableÏÔÊ¾µÄCharacterData
+	private final ArrayList<ColumnManager> cms;
+	private final ArrayList<CharacterData> cds = new ArrayList<>();// å­˜å‚¨å½“å‰tableæ˜¾ç¤ºçš„CharacterData
+
+	public CharacterListTableModel() {
+		this.cms = this.initCMS();
+	}
 
 	private ArrayList<ColumnManager> initCMS() {
 		ArrayList<ColumnManager> array = new ArrayList<>();
 
-		array.add(new ColumnManager(false, "", () -> ImageIcon.class, cd -> cd.getIcon()));
-		array.add(new ColumnManager(true, "ID", () -> Integer.class, cd -> cd.getId()));
-		array.add(new ColumnManager(true, "»¨Ãû", () -> String.class, cd -> {
-			String cn = cd.getChineseName();
-			if (ShowConfig.isUseChineseName() && cn != null) return cd.getChineseName();
-			return cd.getName();
+		array.add(new ColumnManager(false, "", ImageIcon.class, CharacterData::getIcon));
+		array.add(new ColumnManager(true, "ID", Integer.class, cd -> cd.ci.getID()));
+		array.add(new ColumnManager(true, "èŠ±å", String.class, cd -> {
+			String cn = cd.chineseName;
+			if (cn == null) {
+				System.out.println(cd.ci.getID() + "," + cd.ci.getName());
+			}
+			if (ShowConfig.isUseChineseName() && cn != null) {
+				return cn;
+			}
+			return cd.ci.getName();
 		}));
-		array.add(new ColumnManager(false, "Ï¡ÓĞ¶È", () -> String.class, cd -> "¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï".substring(0, cd.getRarity())));
-		array.add(new ColumnManager(true, "¹¥»÷ÊôĞÔ", () -> String.class, cd -> AttackAttributeFilter.STRING_ATTRIBUTE[cd.getAttackAttributeNumber()]));
-		array.add(new ColumnManager(true, "ÒÆ¶¯Á¦", () -> Integer.class, cd -> cd.getMove()));
-		array.add(new ColumnManager(true, "HP", () -> Integer.class, cd -> cd.getHp()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "¹¥»÷Á¦", () -> Integer.class, cd -> cd.getAttack()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "·ÀÓùÁ¦", () -> Integer.class, cd -> cd.getDefense()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "×ÛºÏÁ¦", () -> Integer.class, cd -> cd.getPower()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(false, "¹ú¼Ò", () -> String.class, cd -> CountryFilter.STRING_COUNTRY[cd.getCountryNumber()]));
-		array.add(new ColumnManager(true, "×´Ì¬", () -> String.class, cd -> {
-			switch (cd.getOEB()) {
+		array.add(new ColumnManager(false, "ç¨€æœ‰åº¦", String.class, cd -> "â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…".substring(0, cd.ci.getRarity())));
+		array.add(new ColumnManager(true, "æ”»å‡»å±æ€§", String.class, cd -> AttackAttributeFilter.SIS[cd.ci.getAttackAttributeNumber()].getString()));
+		array.add(new ColumnManager(true, "ç§»åŠ¨åŠ›", Integer.class, cd -> cd.ci.getMove()));
+		array.add(new ColumnManager(true, "HP", Integer.class, cd -> cd.getHp()[ShowConfig.getFavorIndex()]));
+		array.add(new ColumnManager(true, "æ”»å‡»åŠ›", Integer.class, cd -> cd.getAttack()[ShowConfig.getFavorIndex()]));
+		array.add(new ColumnManager(true, "é˜²å¾¡åŠ›", Integer.class, cd -> cd.getDefense()[ShowConfig.getFavorIndex()]));
+		array.add(new ColumnManager(true, "ç»¼åˆåŠ›", Integer.class, cd -> cd.getPower()[ShowConfig.getFavorIndex()]));
+		array.add(new ColumnManager(false, "å›½å®¶", String.class, cd -> CountryFilter.SIS[cd.ci.getCountryNumber()].getString()));
+		array.add(new ColumnManager(true, "çŠ¶æ€", String.class, cd -> {
+			switch (cd.ci.getOeb()) {
 				case 1:
-					return "Ô­Ê¼";
+					return "åŸå§‹";
 				case 2:
-					return "½ø»¯";
+					return "è¿›åŒ–";
 				case 3:
-					return "¿ª»¨";
+					return "å¼€èŠ±";
 				default:
 					return "";
 			}
@@ -98,7 +107,9 @@ public class CharacterListTableModel extends AbstractTableModel {
 			for (Filter filter : filters) {
 				flag = flag && filter.filter(cd);
 			}
-			if (flag == true) this.cds.add(cd);
+			if (flag == true) {
+				this.cds.add(cd);
+			}
 		}
 
 		final boolean sortByBid = ShowConfig.isSortByBid();
@@ -107,16 +118,16 @@ public class CharacterListTableModel extends AbstractTableModel {
 			int res;
 
 			if (sortByBloomNumber) {
-				res = -1 * Integer.compare(a.getBloomNumber(), b.getBloomNumber());
+				res = -1 * Integer.compare(a.bloomNumber, b.bloomNumber);
 			} else {
 				res = 0;
 			}
 
 			if (res == 0) {
 				if (sortByBid) {
-					res = -1 * Integer.compare(a.getBid(), b.getBid());
+					res = -1 * Integer.compare(a.ci.getBid(), b.ci.getBid());
 				} else {
-					res = Integer.compare(a.getId(), b.getId());
+					res = Integer.compare(a.ci.getID(), b.ci.getID());
 				}
 			}
 
@@ -127,15 +138,15 @@ public class CharacterListTableModel extends AbstractTableModel {
 	/*-----------------------------------------------------------*/
 
 	/**
-	 * ¹ÜÀíÁĞµÄ±êÌâºÍÏà¹ØÊôĞÔ
+	 * ç®¡ç†åˆ—çš„æ ‡é¢˜å’Œç›¸å…³å±æ€§
 	 */
 	public class ColumnManager {
 		private final String colName;
 		private final Function<CharacterData, Object> va;
-		private final Supplier<Class<?>> cc;
+		private final Class<?> cc;
 		private final boolean isCenter;
 
-		public ColumnManager(boolean isCenter, String colName, Supplier<Class<?>> cc, Function<CharacterData, Object> va) {
+		public ColumnManager(boolean isCenter, String colName, Class<?> cc, Function<CharacterData, Object> va) {
 			this.isCenter = isCenter;
 			this.colName = colName;
 			this.cc = cc;
@@ -147,7 +158,7 @@ public class CharacterListTableModel extends AbstractTableModel {
 		}
 
 		public Class<?> getColumnClass() {
-			return this.cc.get();
+			return this.cc;
 		}
 
 		public Object getValueAt(CharacterData cd) {

@@ -38,5 +38,4 @@ public class FKGPatcher extends Thread {
 	public int getPort2() {
 		return this.port.getAsInt();
 	}
-
 }

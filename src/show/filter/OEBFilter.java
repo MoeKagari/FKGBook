@@ -1,16 +1,23 @@
 package show.filter;
 
-import show.CharacterData;
+import show.data.CharacterData;
 
 public class OEBFilter implements Filter {
-
-	public static final String[] STRING_STAGE = { "Ô­Ê¼½ÇÉ«", "½ø»¯½ÇÉ«", "ÎŞ¿ª»¨½ø»¯", "¿ª»¨½ÇÉ«", "×î¸ß½ø»¯", "È«²¿½ÇÉ«" };
-	private static final int[] STAGE = { 1, 2, 6, 3, 4, 5 };
+	public static final StringInteger[] SIS = {//
+			new StringInteger("åŸå§‹", 1),//
+			new StringInteger("è¿›åŒ–", 2),//
+			new StringInteger("æ— å¼€èŠ±", 13),//
+			new StringInteger("å‡å¼€èŠ±", 4),//
+			new StringInteger("çœŸå¼€èŠ±", 5),//
+			new StringInteger("å¼€èŠ±", 3),//
+			new StringInteger("æœ€é«˜è¿›åŒ–", 11),//
+			new StringInteger("å…¨éƒ¨è§’è‰²", 12),//
+	};
 
 	private final int oeb;
 
 	public OEBFilter(int index) {
-		this.oeb = STAGE[index];
+		this.oeb = SIS[index].getInteger();
 	}
 
 	@Override
@@ -21,43 +28,47 @@ public class OEBFilter implements Filter {
 			case 1:
 			case 2:
 			case 3:
-				if (cd.getOEB() == this.oeb) flag = true;
+				flag = cd.ci.getOeb() == this.oeb;
 				break;
 			case 4:
-				switch (cd.getOEB()) {
+				flag = (cd.ci.getOeb() == 3) && cd.ci.getKariBloom();
+				break;
+			case 5:
+				flag = (cd.ci.getOeb() == 3) && !cd.ci.getKariBloom();
+				break;
+		}
+		switch (this.oeb) {
+			case 11:
+				switch (cd.ci.getOeb()) {
 					case 1:
 						flag = false;
 						break;
 					case 2:
-						if (!cd.hasBloom()) flag = true;
+						flag = !cd.ci.hasBloom();
 						break;
 					case 3:
 						flag = true;
 						break;
 				}
 				break;
-			case 5:
+			case 12:
 				flag = true;
 				break;
-			case 6:
-				switch (cd.getOEB()) {
+			case 13:
+				switch (cd.ci.getOeb()) {
 					case 1:
 						flag = false;
 						break;
 					case 2:
-						if (!cd.hasBloom()) flag = true;
+						flag = !cd.ci.hasBloom();
 						break;
 					case 3:
 						flag = false;
 						break;
 				}
 				break;
-			default:
-				flag = false;
-				break;
 		}
 
 		return flag;
 	}
-
 }

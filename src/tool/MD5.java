@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MD5 {
-
 	public static String getMD5(String sourceStr) {
 		try {
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -22,5 +21,4 @@ public class MD5 {
 			return null;
 		}
 	}
-
 }

@@ -3,12 +3,10 @@ package show;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,10 +26,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import patch.api.getMaster.CharacterInformation;
-import patch.other.ShowFlower;
 import show.CharacterListTableModel.ColumnManager;
 import show.config.ShowConfig;
+import show.data.CharacterData;
 import show.filter.AttackAttributeFilter;
 import show.filter.CountryFilter;
 import show.filter.Filter;
@@ -41,7 +38,6 @@ import show.filter.SkilltypeFilter;
 import tool.IndexFinder;
 
 public class ShowFlowerInformation {
-
 	private int rowHeight = 50;
 
 	private JDialog frame;
@@ -68,7 +64,6 @@ public class ShowFlowerInformation {
 	};
 
 	private SkillPanel panel;
-	private ShowOther showFlower;
 
 	private JRadioButton[] jrb_oeb;
 	private JCheckBox jcb_cn;
@@ -81,17 +76,44 @@ public class ShowFlowerInformation {
 	public ShowFlowerInformation() {
 		this.panel = new SkillPanel();
 		this.scltm = new CharacterListTableModel();
-		this.initFrame();
-		this.initTable();
-		this.initJSC();
+
+		this.frame = new JDialog();
+		this.frame.setTitle("æ‰€æœ‰èŠ±å¨˜");
+		this.frame.setSize(1600, 771);
+		this.frame.setLocationRelativeTo(null);
+		this.frame.setResizable(false);
+		this.frame.getContentPane().setLayout(new BorderLayout());
+		this.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+		this.table = new JTable(this.scltm);
+		this.table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					int rowNum = ShowFlowerInformation.this.table.getSelectedRow();
+					int id = (int) ShowFlowerInformation.this.table.getValueAt(rowNum, 1);
+					CharacterData cd = CharacterData.get().get(id);
+					if (cd != null) {
+						ShowFlowerInformation.this.panel.showCharacter(cd);
+					}
+				}
+			}
+		});
+		this.table.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				ShowFlowerInformation.this.frame.requestFocusInWindow();
+			}
+		});
+
+		JTable rowHeader = new JTable(this.rowHeaderModel);
+		rowHeader.setRowHeight(this.rowHeight);
+		rowHeader.getColumnModel().getColumn(0).setCellRenderer(getTCR_Center());
+		this.jsc = new JScrollPane(this.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		this.jsc.setRowHeaderView(rowHeader);
+
 		this.initComponent();
 		this.layoutFrame();
-
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = size.width;
-		int height = size.height;
-		this.showFlower = new ShowOther(null, 3 * width, 3 * height);
-
 		this.updateTable();
 		this.frame.requestFocus();
 	}
@@ -116,13 +138,13 @@ public class ShowFlowerInformation {
 			{
 				JPanel frame_center_north_2 = new JPanel();
 				{
-					frame_center_north_2.add(new JLabel("Ï¡ÓĞ¶È£º"));
+					frame_center_north_2.add(new JLabel("ç¨€æœ‰åº¦ï¼š"));
 					frame_center_north_2.add(this.jcb_rarity);
-					frame_center_north_2.add(new JLabel("¹¥»÷ÊôĞÔ£º"));
+					frame_center_north_2.add(new JLabel("æ”»å‡»å±æ€§ï¼š"));
 					frame_center_north_2.add(this.jcb_attribute);
-					frame_center_north_2.add(new JLabel("¹ú¼Ò£º"));
+					frame_center_north_2.add(new JLabel("å›½å®¶ï¼š"));
 					frame_center_north_2.add(this.jcb_country);
-					frame_center_north_2.add(new JLabel("¼¼ÄÜÀàĞÍ£º"));
+					frame_center_north_2.add(new JLabel("æŠ€èƒ½ç±»å‹ï¼š"));
 					frame_center_north_2.add(this.jcb_skilltype);
 					frame_center_north_2.add(this.clear);
 				}
@@ -159,11 +181,11 @@ public class ShowFlowerInformation {
 	}
 
 	private void updateTable() {
-		ShowConfig.setOEBIndex(IndexFinder.find(this.jrb_oeb, jrb -> jrb.isSelected()));
+		ShowConfig.setOEBIndex(IndexFinder.find(this.jrb_oeb, JRadioButton::isSelected));
 		ShowConfig.setUseChineseName(this.jcb_cn.isSelected());
 		ShowConfig.setSortByBid(this.jcb_bid.isSelected());
 		ShowConfig.setSortByBloomNumber(this.jcb_bloomnumber.isSelected());
-		ShowConfig.setFavorIndex(IndexFinder.find(this.jrb_favor, jrb -> jrb.isSelected()));
+		ShowConfig.setFavorIndex(IndexFinder.find(this.jrb_favor, JRadioButton::isSelected));
 		ShowConfig.setRarityIndex(this.jcb_rarity.getSelectedIndex());
 		ShowConfig.setAAIndex(this.jcb_attribute.getSelectedIndex());
 		ShowConfig.setCountryIndex(this.jcb_country.getSelectedIndex());
@@ -181,19 +203,21 @@ public class ShowFlowerInformation {
 		this.rowHeaderModel.fireTableDataChanged();
 		{
 			this.table.setRowHeight(this.rowHeight);
-			// ÉèÖÃµ¥Ñ¡
+
+			// è®¾ç½®å•é€‰
 			this.table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			// ÉèÖÃÍ·ÏñÀ¸µÄwidthºÍheight£¬²¢ÇÒ²»¿É¸Ä±ä´óĞ¡
+
+			// è®¾ç½®å¤´åƒæ çš„widthï¼Œå¹¶ä¸”ä¸å¯æ”¹å˜å¤§å°
 			TableColumn tc0 = this.table.getColumnModel().getColumn(0);
 			int iconWidth = 50;
 			tc0.setMaxWidth(iconWidth);
 			tc0.setMinWidth(iconWidth);
 			tc0.setResizable(false);
-			// ÉèÖÃÁĞ²»¿ÉÍÏ¶¯
-			this.table.getTableHeader().setReorderingAllowed(false);
-			// ÉèÖÃÁĞ¿ÉÅÅĞò
-			this.table.setAutoCreateRowSorter(true);
-			// ÉèÖÃ¾ÓÖĞ
+
+			this.table.getTableHeader().setReorderingAllowed(false);	// è®¾ç½®åˆ—ä¸å¯æ‹–åŠ¨			
+			this.table.setAutoCreateRowSorter(true);// è®¾ç½®åˆ—å¯æ’åº
+
+			// è®¾ç½®å±…ä¸­
 			ArrayList<ColumnManager> cms = this.scltm.getCMS();
 			for (int i = 0; i < cms.size(); i++) {
 				if (cms.get(i).isCenter()) {
@@ -208,122 +232,66 @@ public class ShowFlowerInformation {
 	/*-----------------------------------------------------------------------------------*/
 
 	private void initComponent() {
-		{
-			ButtonGroup bg_oeb = new ButtonGroup();
-			this.jrb_oeb = new JRadioButton[OEBFilter.STRING_STAGE.length];
-			for (int i = 0; i < this.jrb_oeb.length; i++) {
-				this.jrb_oeb[i] = new JRadioButton(OEBFilter.STRING_STAGE[i]);
-				this.jrb_oeb[i].setFocusPainted(false);
-				this.jrb_oeb[i].addActionListener(ev -> this.updateTable());
-				bg_oeb.add(this.jrb_oeb[i]);
-			}
-			this.jrb_oeb[ShowConfig.getOEBIndex()].setSelected(true);
+		ButtonGroup bg_oeb = new ButtonGroup();
+		this.jrb_oeb = new JRadioButton[OEBFilter.SIS.length];
+		for (int i = 0; i < this.jrb_oeb.length; i++) {
+			this.jrb_oeb[i] = new JRadioButton(OEBFilter.SIS[i].getString());
+			this.jrb_oeb[i].setFocusPainted(false);
+			this.jrb_oeb[i].addActionListener(ev -> this.updateTable());
+			bg_oeb.add(this.jrb_oeb[i]);
 		}
-		{
-			this.jcb_cn = new JCheckBox("ÖĞÎÄÃû");
-			this.jcb_cn.setFocusPainted(false);
-			this.jcb_cn.setSelected(ShowConfig.isUseChineseName());
-			this.jcb_cn.addActionListener(ev -> this.updateTable());
-		}
-		{
-			this.jcb_bid = new JCheckBox("Í¼¼øË³Ğò");
-			this.jcb_bid.setFocusPainted(false);
-			this.jcb_bid.setSelected(ShowConfig.isSortByBid());
-			this.jcb_bid.addActionListener(ev -> {
-				this.scltm.fireTableStructureChanged();
-				this.updateTable();
-			});
-		}
-		{
-			this.jcb_bloomnumber = new JCheckBox("¿ª»¨Ë³Ğò");
-			this.jcb_bloomnumber.setFocusPainted(false);
-			this.jcb_bloomnumber.setSelected(ShowConfig.isSortByBloomNumber());
-			this.jcb_bloomnumber.addActionListener(ev -> {
-				this.scltm.fireTableStructureChanged();
-				this.updateTable();
-			});
-		}
-		{
-			ButtonGroup bg_favor = new ButtonGroup();
-			this.jrb_favor = new JRadioButton[ShowConfig.STRING_FAVOR.length];
-			for (int i = 0; i < this.jrb_favor.length; i++) {
-				this.jrb_favor[i] = new JRadioButton(ShowConfig.STRING_FAVOR[i]);
-				this.jrb_favor[i].setFocusPainted(false);
-				this.jrb_favor[i].addActionListener(ev -> this.updateTable());
-				bg_favor.add(this.jrb_favor[i]);
-			}
-			this.jrb_favor[ShowConfig.getFavorIndex()].setSelected(true);
-		}
-		{
-			this.jcb_rarity = new JComboBox<>(RarityFilter.STRING_RARITY);
-			this.jcb_rarity.setEditable(false);
-			this.jcb_rarity.setSelectedIndex(ShowConfig.getRarityIndex());
-			this.jcb_attribute = new JComboBox<>(AttackAttributeFilter.STRING_ATTRIBUTE);
-			this.jcb_attribute.setEditable(false);
-			this.jcb_attribute.setSelectedIndex(ShowConfig.getAAIndex());
-			this.jcb_country = new JComboBox<>(CountryFilter.STRING_COUNTRY);
-			this.jcb_country.setEditable(false);
-			this.jcb_country.setSelectedIndex(ShowConfig.getCountryIndex());
-			this.jcb_skilltype = new JComboBox<>(SkilltypeFilter.STRING_SKILLTYPE);
-			this.jcb_skilltype.setEditable(false);
-			this.jcb_skilltype.setSelectedIndex(ShowConfig.getSTIndex());
-			for (JComboBox<?> jcb : new JComboBox[] { this.jcb_rarity, this.jcb_attribute, this.jcb_country, this.jcb_skilltype }) {
-				jcb.addActionListener(ev -> this.updateTable());
-			}
-		}
-		{
-			this.clear = new JButton("Çå³ı");
-			this.clear.setFocusPainted(false);
-			this.clear.addActionListener(ev -> this.clearSelectionAndUpdateTable());
-		}
-	}
+		this.jrb_oeb[ShowConfig.getOEBIndex()].setSelected(true);
 
-	private void initJSC() {
-		JTable rowHeader = new JTable(this.rowHeaderModel);
-		rowHeader.setRowHeight(this.rowHeight);
-		rowHeader.getColumnModel().getColumn(0).setCellRenderer(getTCR_Center());
+		this.jcb_cn = new JCheckBox("ä¸­æ–‡å");
+		this.jcb_cn.setFocusPainted(false);
+		this.jcb_cn.setSelected(ShowConfig.isUseChineseName());
+		this.jcb_cn.addActionListener(ev -> this.updateTable());
 
-		this.jsc = new JScrollPane(this.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		this.jsc.setRowHeaderView(rowHeader);
-	}
-
-	private void initTable() {
-		this.table = new JTable(this.scltm);
-		this.table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					int rowNum = ShowFlowerInformation.this.table.getSelectedRow();
-					int id = (int) ShowFlowerInformation.this.table.getValueAt(rowNum, 1);
-					CharacterData cd = CharacterData.get().get(id);
-					if (cd != null) {
-						ShowFlowerInformation.this.panel.showCharacter(cd);
-					}
-					if (e.getClickCount() == 2) {
-						BufferedImage image = ShowFlower.show(CharacterInformation.getElement(CharacterInformation.get(), id));
-						if (image != null) {
-							ShowFlowerInformation.this.showFlower.display(id, image);
-						}
-					}
-				}
-			}
+		this.jcb_bid = new JCheckBox("å›¾é‰´é¡ºåº");
+		this.jcb_bid.setFocusPainted(false);
+		this.jcb_bid.setSelected(ShowConfig.isSortByBid());
+		this.jcb_bid.addActionListener(ev -> {
+			this.scltm.fireTableStructureChanged();
+			this.updateTable();
 		});
-		this.table.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				ShowFlowerInformation.this.frame.requestFocusInWindow();
-			}
-		});
-	}
 
-	private void initFrame() {
-		this.frame = new JDialog();
-		this.frame.setTitle("ËùÓĞ»¨Äï");
-		this.frame.setSize(1500, 773);
-		this.frame.setLocationRelativeTo(null);
-		//this.frame.setResizable(false);
-		this.frame.getContentPane().setLayout(new BorderLayout());
-		this.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.jcb_bloomnumber = new JCheckBox("å¼€èŠ±é¡ºåº");
+		this.jcb_bloomnumber.setFocusPainted(false);
+		this.jcb_bloomnumber.setSelected(ShowConfig.isSortByBloomNumber());
+		this.jcb_bloomnumber.addActionListener(ev -> {
+			this.scltm.fireTableStructureChanged();
+			this.updateTable();
+		});
+
+		ButtonGroup bg_favor = new ButtonGroup();
+		this.jrb_favor = new JRadioButton[ShowConfig.STRING_FAVOR.length];
+		for (int i = 0; i < this.jrb_favor.length; i++) {
+			this.jrb_favor[i] = new JRadioButton(ShowConfig.STRING_FAVOR[i]);
+			this.jrb_favor[i].setFocusPainted(false);
+			this.jrb_favor[i].addActionListener(ev -> this.updateTable());
+			bg_favor.add(this.jrb_favor[i]);
+		}
+		this.jrb_favor[ShowConfig.getFavorIndex()].setSelected(true);
+
+		this.jcb_rarity = new JComboBox<>(Filter.toStringArray(RarityFilter.SIS));
+		this.jcb_rarity.setEditable(false);
+		this.jcb_rarity.setSelectedIndex(ShowConfig.getRarityIndex());
+		this.jcb_attribute = new JComboBox<>(Filter.toStringArray(AttackAttributeFilter.SIS));
+		this.jcb_attribute.setEditable(false);
+		this.jcb_attribute.setSelectedIndex(ShowConfig.getAAIndex());
+		this.jcb_country = new JComboBox<>(Filter.toStringArray(CountryFilter.SIS));
+		this.jcb_country.setEditable(false);
+		this.jcb_country.setSelectedIndex(ShowConfig.getCountryIndex());
+		this.jcb_skilltype = new JComboBox<>(Filter.toStringArray(SkilltypeFilter.SIS));
+		this.jcb_skilltype.setEditable(false);
+		this.jcb_skilltype.setSelectedIndex(ShowConfig.getSTIndex());
+		for (JComboBox<?> jcb : new JComboBox[] { this.jcb_rarity, this.jcb_attribute, this.jcb_country, this.jcb_skilltype }) {
+			jcb.addActionListener(ev -> this.updateTable());
+		}
+
+		this.clear = new JButton("æ¸…é™¤");
+		this.clear.setFocusPainted(false);
+		this.clear.addActionListener(ev -> this.clearSelectionAndUpdateTable());
 	}
 
 	private static DefaultTableCellRenderer getTCR_Center() {

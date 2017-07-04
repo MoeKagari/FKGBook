@@ -5,15 +5,15 @@ public class CharacterLeaderSkill implements GameData {
 
 	int id;
 	String name;
-	/** ×éºÏ¼¼ÄÜ1ÀàĞÍ */
+	/** ç»„åˆæŠ€èƒ½1ç±»å‹ */
 	int c;
-	/** ×éºÏ¼¼ÄÜ1²ÎÊı1 */
+	/** ç»„åˆæŠ€èƒ½1å‚æ•°1 */
 	int d;
-	/** ×éºÏ¼¼ÄÜ1×÷ÓÃÈËÊı */
+	/** ç»„åˆæŠ€èƒ½1ä½œç”¨äººæ•° */
 	int e;
-	/** ×éºÏ¼¼ÄÜ1²ÎÊı2 */
+	/** ç»„åˆæŠ€èƒ½1å‚æ•°2 */
 	int f;
-	/** ×éºÏ¼¼ÄÜ2 */
+	/** ç»„åˆæŠ€èƒ½2 */
 	int g, h, i, j;
 	String effect;
 	String time1, time2;

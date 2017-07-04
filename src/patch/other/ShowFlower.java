@@ -13,17 +13,20 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
+
 import patch.api.getMaster.CharacterInformation;
 import patch.api.getMaster.CharacterLeaderSkill;
 import patch.api.getMaster.CharacterSkill;
 import patch.api.getMaster.GameData;
 import show.config.ShowConfig;
 import tool.Downloader;
-import tool.FileUtil;
 import tool.ZLibUtils;
 
 public class ShowFlower {
 	private final static GameData[] cis = CharacterInformation.get();
+	private final static GameData[] clss = CharacterLeaderSkill.get();
+	private final static GameData[] css = CharacterSkill.get();
 
 	public static void main(String[] args) {
 		for (GameData gd : cis) {
@@ -60,7 +63,7 @@ public class ShowFlower {
 		int id = ci.getID();
 
 		if (orb == 1) {
-			System.out.println("Ô­Ê¼½ÇÉ«£º" + id);
+			System.out.println("åŽŸå§‹è§’è‰²ï¼š" + id);
 			return null;
 		}
 
@@ -78,7 +81,9 @@ public class ShowFlower {
 		int height = 0;
 		for (BufferedImage im : ims) {
 			width += im.getWidth();
-			if (height < im.getHeight()) height = im.getHeight();
+			if (height < im.getHeight()) {
+				height = im.getHeight();
+			}
 		}
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -96,6 +101,7 @@ public class ShowFlower {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return image;
 	}
 
@@ -124,10 +130,10 @@ public class ShowFlower {
 		}
 
 		try {
-			FileUtil.save(file, bytes);
+			FileUtils.writeByteArrayToFile(file, bytes);
 			return ImageIO.read(new ByteArrayInputStream(bytes));
 		} catch (IOException e) {
-			System.out.println("ImageIO.read() ´íÎó.");
+			System.out.println("ImageIO.read() é”™è¯¯.");
 			return null;
 		}
 	}
@@ -173,17 +179,14 @@ public class ShowFlower {
 	}
 
 	private static String getDescription(CharacterInformation ci) {
-		GameData[] clss = CharacterLeaderSkill.get();
-		GameData[] css = CharacterSkill.get();
-
 		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < ci.getRarity(); i++)
-			sb.append("¡ï");
+			sb.append("â˜…");
 		sb.append("\n");
-		sb.append("»¨Ãû£º" + ci.getName() + "\n\n");
-		sb.append("ÊôÐÔ£º" + ci.getAttackAttribute() + "\n");
-		sb.append("ÒÆ¶¯Á¦£º" + ci.getMove() + "\n");
+		sb.append("èŠ±åï¼š" + ci.getName() + "\n\n");
+		sb.append("å±žæ€§ï¼š" + ci.getAttackAttribute() + "\n");
+		sb.append("ç§»åŠ¨åŠ›ï¼š" + ci.getMove() + "\n");
 
 		int[] hp = ci.getHP();
 		int[] attack = ci.getAttack();
@@ -191,15 +194,15 @@ public class ShowFlower {
 		int h = hp[0];
 		int a = attack[0];
 		int d = defense[0];
-		sb.append(String.format("000%%Âú¼¶£º%d  %d  %d %d\n", h, a, d, h + a + d));
+		sb.append(String.format("000%%æ»¡çº§ï¼š%d  %d  %d %d\n", h, a, d, h + a + d));
 		h += hp[1] * 1.2;
 		a += attack[1] * 1.2;
 		d += defense[1] * 1.2;
-		sb.append(String.format("100%%Âú¼¶£º%d  %d  %d %d\n", h, a, d, h + a + d));
+		sb.append(String.format("100%%æ»¡çº§ï¼š%d  %d  %d %d\n", h, a, d, h + a + d));
 		h += hp[2] * 1.2;
 		a += attack[2] * 1.2;
 		d += defense[2] * 1.2;
-		sb.append(String.format("200%%Âú¼¶£º%d  %d  %d %d\n", h, a, d, h + a + d));
+		sb.append(String.format("200%%æ»¡çº§ï¼š%d  %d  %d %d\n", h, a, d, h + a + d));
 
 		sb.append("\n");
 
@@ -207,16 +210,16 @@ public class ShowFlower {
 
 		if (skill[2] != null && skill[2] instanceof CharacterSkill) {
 			CharacterSkill cs = (CharacterSkill) skill[2];
-			sb.append("Ö÷¶¯¼¼ÄÜÃû£º\n" + cs.getName() + "\n");
-			sb.append("Ö÷¶¯¼¼ÄÜ£º\n" + cs.getEffect() + "\n");
+			sb.append("ä¸»åŠ¨æŠ€èƒ½åï¼š\n" + cs.getName() + "\n");
+			sb.append("ä¸»åŠ¨æŠ€èƒ½ï¼š\n" + cs.getEffect() + "\n");
 		}
 		if (skill[0] != null && skill[0] instanceof CharacterLeaderSkill) {
 			CharacterLeaderSkill cls = (CharacterLeaderSkill) skill[0];
-			sb.append("±»¶¯1£º\n" + cls.getEffect() + "\n");
+			sb.append("è¢«åŠ¨1ï¼š\n" + cls.getEffect() + "\n");
 		}
 		if (skill[1] != null && skill[1] instanceof CharacterLeaderSkill) {
 			CharacterLeaderSkill cls = (CharacterLeaderSkill) skill[1];
-			sb.append("±»¶¯2£º\n" + cls.getEffect() + "\n");
+			sb.append("è¢«åŠ¨2ï¼š\n" + cls.getEffect() + "\n");
 		}
 
 		return sb.toString();

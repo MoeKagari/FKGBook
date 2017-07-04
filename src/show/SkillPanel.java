@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.function.Function;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -12,20 +11,22 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import show.config.ShowConfig;
+import show.data.CharacterData;
 import tool.IndexFinder;
 
 /**
- * ”“≤‡œ‘ æskill
+ * Âè≥‰æßÊòæÁ§∫skill
  */
 @SuppressWarnings("serial")
 public class SkillPanel extends JPanel {
 	private final CharacterData[] cds = new CharacterData[3];
 	private final JRadioButton[] jrb_oeb = new JRadioButton[3];
-	private final String[] string_oeb = { "‘≠ º", "Ω¯ªØ", "ø™ª®" };
+	private final String[] string_oeb = { "ÂéüÂßã", "ËøõÂåñ", "ÂºÄËä±" };
+
 	private BufferedImage image;
+	private JButton lihui;
 	private ShowPanel sp;
-	private JButton lihui, valentine;
-	private ShowOther showStand, showValentine;
+	private ShowOther showStand;
 
 	public SkillPanel() {
 		this.sp = new ShowPanel();
@@ -36,59 +37,48 @@ public class SkillPanel extends JPanel {
 		ButtonGroup bg = new ButtonGroup();
 
 		for (int i = 0; i < this.jrb_oeb.length; i++) {
-			this.jrb_oeb[i] = new JRadioButton(this.string_oeb[i]);
-			this.jrb_oeb[i].setFocusPainted(false);
-			this.jrb_oeb[i].setEnabled(false);
-			int mode = i;
-			this.jrb_oeb[i].addActionListener(ev -> this.reflash(mode + 1));
-			bg.add(this.jrb_oeb[i]);
-			north.add(this.jrb_oeb[i]);
+			JRadioButton jrb = this.jrb_oeb[i] = new JRadioButton(this.string_oeb[i]);
+			jrb.setFocusPainted(false);
+			jrb.setEnabled(false);
+			int index = i;
+			jrb.addActionListener(ev -> this.reflash(index + 1));
+			bg.add(jrb);
+			north.add(jrb);
 		}
 
-		this.showStand = new ShowOther(ShowConfig.CHARACTER_STAND, 960, 640);
-		this.lihui = new JButton("¡¢ªÊ");
+		this.showStand = new ShowOther(false, ShowConfig.CHARACTER_STAND, 960, 640);
+		this.lihui = new JButton("Á´ãÁªò");
 		this.lihui.setFocusPainted(false);
-		this.lihui.addActionListener(ev -> this.showOther(this.showStand, CharacterData::getStand));
+		this.lihui.addActionListener(ev -> {
+			int index = IndexFinder.find(this.jrb_oeb, JRadioButton::isSelected);
+			if (index != -1) {
+				CharacterData cd = this.cds[index];
+				if (cd != null) {
+					this.showStand.display(cd.ci.getID(), cd.getStand());
+				}
+			}
+		});
 		north.add(this.lihui);
-
-		this.showValentine = new ShowOther(ShowConfig.CHARACTER_VALENTINE, 960, 640);
-		this.valentine = new JButton("«È»ÀΩ⁄");
-		this.valentine.setFocusPainted(false);
-		this.valentine.setToolTipText("2017«È»ÀΩ⁄");
-		this.valentine.addActionListener(ev -> this.showOther(this.showValentine, CharacterData::getValentine));
-		north.add(this.valentine);
 
 		this.add(north, BorderLayout.NORTH);
 		this.add(this.sp, BorderLayout.CENTER);
 	}
 
-	private void showOther(ShowOther so, Function<CharacterData, BufferedImage> fun) {
-		int index = IndexFinder.find(this.jrb_oeb, jrb -> jrb.isSelected());
-		if (index != -1) {
-			CharacterData cd = this.cds[index];
-			if (cd != null) {
-				so.display(cd.getId(), fun.apply(cd));
-			}
-		}
-	}
-
-	private void reflash(int mode) {
-		this.jrb_oeb[mode - 1].setSelected(true);
-		this.valentine.setEnabled(this.cds[mode - 1].getValentine() != null);
-		this.image = this.cds[mode - 1].getSkillImage();
+	private void reflash(int oeb) {
+		this.jrb_oeb[oeb - 1].setSelected(true);
+		this.image = this.cds[oeb - 1].getSkillImage();
 		this.sp.repaint();
 	}
 
 	public void dispose() {
 		this.showStand.getWindow().dispose();
-		this.showValentine.getWindow().dispose();
 	}
 
 	public void showCharacter(CharacterData cd) {
 		if (cd == null) return;
 
-		final int oeb = cd.getOEB();
-		int id = cd.getId() - (oeb == 2 ? 1 : (oeb == 3 ? 300000 : 0));
+		int oeb = cd.ci.getOeb();
+		int id = cd.ci.getID() - (oeb == 2 ? 1 : (oeb == 3 ? 300000 : 0));
 		this.cds[0] = CharacterData.get().get(id);
 		this.cds[1] = CharacterData.get().get(id + 1);
 		this.cds[2] = CharacterData.get().get(id + 300000);
@@ -110,5 +100,4 @@ public class SkillPanel extends JPanel {
 			}
 		}
 	}
-
 }

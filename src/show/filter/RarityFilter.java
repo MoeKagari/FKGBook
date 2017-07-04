@@ -1,20 +1,25 @@
 package show.filter;
 
-import show.CharacterData;
+import show.data.CharacterData;
 
 public class RarityFilter implements Filter {
-	public static final String[] STRING_RARITY = { "ÎÞ", "¡ï2", "¡ï3", "¡ï4", "¡ï5", "¡ï6" };
-	private static final int[] RARITY = { 0, 2, 3, 4, 5, 6 };
+	public static final StringInteger[] SIS = {//
+			new StringInteger("æ— ", 0),//
+			new StringInteger("â˜…2", 2),//
+			new StringInteger("â˜…3", 3),//
+			new StringInteger("â˜…4", 4),//
+			new StringInteger("â˜…5", 5),//
+			new StringInteger("â˜…6", 6),//
+	};
 
 	private final int rarity;
 
 	public RarityFilter(int index) {
-		this.rarity = RARITY[index];
+		this.rarity = SIS[index].getInteger();
 	}
 
 	@Override
 	public boolean filter(CharacterData cd) {
-		return rarity == 0 || rarity == cd.getRarity();
+		return this.rarity == 0 || this.rarity == cd.ci.getRarity();
 	}
-
 }

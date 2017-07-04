@@ -5,7 +5,7 @@ public class CharacterSkill implements GameData {
 
 	int id;
 	String name;
-	/** ¼¼ÄÜÀàĞÍ ¼¼ÄÜ²ÎÊı1 ¼¼ÄÜ×÷ÓÃÈËÊı ¼¼ÄÜ²ÎÊı2 */
+	/** æŠ€èƒ½ç±»å‹ æŠ€èƒ½å‚æ•°1 æŠ€èƒ½ä½œç”¨äººæ•° æŠ€èƒ½å‚æ•°2 */
 	int c, d, e, f;
 	String effect;
 	String h, i, j;

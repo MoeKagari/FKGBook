@@ -6,7 +6,7 @@ import patch.api.getMaster.CharacterInformation;
 import patch.api.getMaster.GameData;
 
 /**
- * É¨Ãè¿ª»¨½ÇÉ«
+ * æ‰«æå¼€èŠ±è§’è‰²
  */
 public class CacheBloomCharacter {
 

@@ -1,72 +1,47 @@
 package show.filter;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import show.CharacterData;
+import org.apache.commons.io.FileUtils;
+
 import show.config.ShowConfig;
-import tool.FileUtil;
+import show.data.CharacterData;
 
 public class SkilltypeFilter implements Filter {
-	public final static String[] STRING_SKILLTYPE;
-	private final static int[] SKILLTYPE;
-
-	private static class Skilltype {
-		private final int id;
-		private final String type;
-
-		public int getId() {
-			return this.id;
-		}
-
-		public String getType() {
-			return this.type;
-		}
-
-		public Skilltype(int id, String type) {
-			this.id = id;
-			this.type = type;
-		}
-
-	}
+	public static final StringInteger[] SIS;
 
 	static {
-		ArrayList<Skilltype> sts = new ArrayList<>();
+		ArrayList<StringInteger> sts = new ArrayList<>();
 
-		byte[] bytes = FileUtil.read(ShowConfig.CHARACTER_SKILLTYPE);
-		if (bytes != null) {
-			String[] sources = new String[0];
-			try {
-				sources = new String(bytes, "utf-8").split("\r\n");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			for (String source : sources) {
-				String[] temp = source.trim().split(",");
-				if (temp.length == 2) {
-					sts.add(new Skilltype(Integer.parseInt(temp[0]), temp[1]));
+		try {
+			byte[] bytes = FileUtils.readFileToByteArray(new File(ShowConfig.CHARACTER_SKILLTYPE));
+			if (bytes != null) {
+				for (String source : new String(bytes, "utf-8").split("\r\n")) {
+					String[] temp = source.trim().split(",");
+					if (temp.length == 2) {
+						sts.add(new StringInteger(temp[1], Integer.parseInt(temp[0])));
+					}
 				}
 			}
+			Collections.sort(sts, (a, b) -> a.getString().compareTo(b.getString()));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		Collections.sort(sts, (a, b) -> a.getType().compareTo(b.getType()));
-
-		int len = sts.size() + 1;
-		SKILLTYPE = new int[len];
-		STRING_SKILLTYPE = new String[len];
-		SKILLTYPE[0] = 0;
-		STRING_SKILLTYPE[0] = "ÎÞ";
-		for (int i = 1; i < len; i++) {
-			SKILLTYPE[i] = sts.get(i - 1).getId();
-			STRING_SKILLTYPE[i] = sts.get(i - 1).getType();
+		sts.add(0, new StringInteger("æ— ", 0));
+		int len = sts.size();
+		SIS = new StringInteger[len];
+		for (int i = 0; i < len; i++) {
+			SIS[i] = sts.get(i);
 		}
 	}
 
 	private final int skilltype;
 
 	public SkilltypeFilter(int index) {
-		this.skilltype = SKILLTYPE[index];
+		this.skilltype = SIS[index].getInteger();
 	}
 
 	@Override
@@ -75,13 +50,13 @@ public class SkilltypeFilter implements Filter {
 			return true;
 		}
 
-		for (int st : cd.getSkill().getSkill1Type()) {
+		for (int st : cd.skill.skill1Type) {
 			if (this.skilltype == st) {
 				return true;
 			}
 		}
 
-		for (int st : cd.getSkill().getSkill2Type()) {
+		for (int st : cd.skill.skill2Type) {
 			if (this.skilltype == st) {
 				return true;
 			}
@@ -89,5 +64,4 @@ public class SkilltypeFilter implements Filter {
 
 		return false;
 	}
-
 }

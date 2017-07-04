@@ -19,18 +19,18 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
-import show.CharacterData;
-import tool.FileUtil;
+import org.apache.commons.io.FileUtils;
+
+import show.data.CharacterData;
 
 public class ValentineCardLetter {
-
 	public static void create() {
 		String name;
 		int flag;
 		do {
-			name = JOptionPane.showInputDialog("ÇëÊäÈëÍÅ³¤Ãû");
+			name = JOptionPane.showInputDialog("è¯·è¾“å…¥å›¢é•¿å");
 			if (name == null || "".equals(name)) return;
-			flag = JOptionPane.showConfirmDialog(null, "È·ÈÏÍÅ³¤ÃûÎª:\n" + name, "È·ÈÏÍÅ³¤Ãû", JOptionPane.YES_NO_OPTION);
+			flag = JOptionPane.showConfirmDialog(null, "ç¡®è®¤å›¢é•¿åä¸º:\n" + name, "ç¡®è®¤å›¢é•¿å", JOptionPane.YES_NO_OPTION);
 			if (flag == JOptionPane.CLOSED_OPTION) return;
 		} while (flag != JOptionPane.OK_OPTION);
 
@@ -62,8 +62,8 @@ public class ValentineCardLetter {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("Íê±Ï");
-			bar.setString("Íê±Ï");
+			System.out.println("å®Œæ¯•");
+			bar.setString("å®Œæ¯•");
 		});
 		thread.setDaemon(true);
 		thread.start();
@@ -72,7 +72,7 @@ public class ValentineCardLetter {
 			combineImage(name);
 		} catch (Exception e) {
 			over = true;
-			JOptionPane.showMessageDialog(frame, e, "·¢Éú´íÎó", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, e, "å‘ç”Ÿé”™è¯¯", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -87,7 +87,7 @@ public class ValentineCardLetter {
 		//System.out.println(MD5.getMD5("bustup_131926_02"));
 
 		Map<Integer, MasterLetter> mls = new HashMap<>();
-		String[] sources = new String(FileUtil.read("resources\\character_image\\valentine\\other\\masterLetter.csv"), "utf-8").trim().split("\n");
+		String[] sources = new String(FileUtils.readFileToByteArray(new File("resources\\character_image\\valentine\\other\\masterLetter.csv")), "utf-8").trim().split("\n");
 		for (String source : sources) {
 			MasterLetter ml = new MasterLetter(source);
 			mls.put(ml.id, ml);
@@ -96,9 +96,9 @@ public class ValentineCardLetter {
 		for (CharacterData cd : CharacterData.get().values()) {
 			if (over) break;
 
-			int id = cd.getId();
+			int id = cd.id;
 			MasterLetter ml = null;
-			switch (cd.getOEB()) {
+			switch (cd.oeb) {
 				case 1:
 					ml = mls.get(id);
 					break;
@@ -132,7 +132,9 @@ public class ValentineCardLetter {
 
 		BufferedImage image = combineImage(getTextWindow(ml.text, textWindow, name), background, accent, bustup);
 		try {
-			ImageIO.write(image, "png", FileUtil.create("resources\\character_image\\valentine\\card\\" + id + ".png"));
+			File file = new File("resources\\character_image\\valentine\\card\\" + id + ".png");
+			file.getParentFile().mkdirs();
+			ImageIO.write(image, "png", file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -222,7 +224,5 @@ public class ValentineCardLetter {
 		public String getAccent() {
 			return "http://dugrqaqinbtcq.cloudfront.net/product/images/mypage/letter/" + this.accent;
 		}
-
 	}
-
 }

@@ -3,12 +3,12 @@ package patch.other;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import tool.Downloader;
-import tool.FileUtil;
 
 public class DownloadComic {
 
@@ -66,7 +66,9 @@ public class DownloadComic {
 		g.drawImage(images[5], x, y, null);
 
 		try {
-			ImageIO.write(image, "jpg", FileUtil.create(filename));
+			File file = new File(filename);
+			file.getParentFile().mkdirs();
+			ImageIO.write(image, "jpg", file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
