@@ -1,33 +1,27 @@
-package show;
+package fkg.gui.book;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
-import show.config.ShowConfig;
-import show.data.CharacterData;
-import show.filter.AttackAttributeFilter;
-import show.filter.CountryFilter;
-import show.filter.Filter;
+import fkg.gui.book.data.CharacterData;
+import fkg.gui.book.filter.AttackAttributeFilter;
+import fkg.gui.book.filter.CountryFilter;
+import fkg.gui.book.filter.Filter;
 
 @SuppressWarnings("serial")
 public class CharacterListTableModel extends AbstractTableModel {
-	private final ArrayList<ColumnManager> cms;
-	private final ArrayList<CharacterData> cds = new ArrayList<>();// 存储当前table显示的CharacterData
+	private final List<ColumnManager> cms = new ArrayList<>();
+	private final List<CharacterData> cds = new ArrayList<>();// 存储当前table显示的CharacterData
 
 	public CharacterListTableModel() {
-		this.cms = this.initCMS();
-	}
-
-	private ArrayList<ColumnManager> initCMS() {
-		ArrayList<ColumnManager> array = new ArrayList<>();
-
-		array.add(new ColumnManager(false, "", ImageIcon.class, CharacterData::getIcon));
-		array.add(new ColumnManager(true, "ID", Integer.class, cd -> cd.ci.getID()));
-		array.add(new ColumnManager(true, "花名", String.class, cd -> {
+		this.cms.add(new ColumnManager(false, "", ImageIcon.class, cd -> cd.icon));
+		this.cms.add(new ColumnManager(true, "ID", Integer.class, cd -> cd.ci.getID()));
+		this.cms.add(new ColumnManager(true, "花名", String.class, cd -> {
 			String cn = cd.chineseName;
 			if (cn == null) {
 				System.out.println(cd.ci.getID() + "," + cd.ci.getName());
@@ -37,15 +31,15 @@ public class CharacterListTableModel extends AbstractTableModel {
 			}
 			return cd.ci.getName();
 		}));
-		array.add(new ColumnManager(false, "稀有度", String.class, cd -> "★★★★★★★★★★".substring(0, cd.ci.getRarity())));
-		array.add(new ColumnManager(true, "攻击属性", String.class, cd -> AttackAttributeFilter.SIS[cd.ci.getAttackAttributeNumber()].getString()));
-		array.add(new ColumnManager(true, "移动力", Integer.class, cd -> cd.ci.getMove()));
-		array.add(new ColumnManager(true, "HP", Integer.class, cd -> cd.getHp()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "攻击力", Integer.class, cd -> cd.getAttack()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "防御力", Integer.class, cd -> cd.getDefense()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(true, "综合力", Integer.class, cd -> cd.getPower()[ShowConfig.getFavorIndex()]));
-		array.add(new ColumnManager(false, "国家", String.class, cd -> CountryFilter.SIS[cd.ci.getCountryNumber()].getString()));
-		array.add(new ColumnManager(true, "状态", String.class, cd -> {
+		this.cms.add(new ColumnManager(false, "稀有度", String.class, cd -> "★★★★★★★★★★".substring(0, cd.ci.getRarity())));
+		this.cms.add(new ColumnManager(true, "攻击属性", String.class, cd -> AttackAttributeFilter.SIS[cd.ci.getAttackAttributeNumber()].getString()));
+		this.cms.add(new ColumnManager(true, "移动力", Integer.class, cd -> cd.ci.getMove()));
+		this.cms.add(new ColumnManager(true, "HP", Integer.class, cd -> cd.getHp()[ShowConfig.getFavorIndex()]));
+		this.cms.add(new ColumnManager(true, "攻击力", Integer.class, cd -> cd.getAttack()[ShowConfig.getFavorIndex()]));
+		this.cms.add(new ColumnManager(true, "防御力", Integer.class, cd -> cd.getDefense()[ShowConfig.getFavorIndex()]));
+		this.cms.add(new ColumnManager(true, "综合力", Integer.class, cd -> cd.getPower()[ShowConfig.getFavorIndex()]));
+		this.cms.add(new ColumnManager(false, "国家", String.class, cd -> CountryFilter.SIS[cd.ci.getCountryNumber()].getString()));
+		this.cms.add(new ColumnManager(true, "状态", String.class, cd -> {
 			switch (cd.ci.getOeb()) {
 				case 1:
 					return "原始";
@@ -57,11 +51,9 @@ public class CharacterListTableModel extends AbstractTableModel {
 					return "";
 			}
 		}));
-
-		return array;
 	}
 
-	public ArrayList<ColumnManager> getCMS() {
+	public List<ColumnManager> getCMS() {
 		return this.cms;
 	}
 
@@ -101,16 +93,7 @@ public class CharacterListTableModel extends AbstractTableModel {
 
 	public void updateCDS(ArrayList<Filter> filters) {
 		this.cds.clear();
-
-		for (CharacterData cd : CharacterData.get().values()) {
-			boolean flag = true;
-			for (Filter filter : filters) {
-				flag = flag && filter.filter(cd);
-			}
-			if (flag == true) {
-				this.cds.add(cd);
-			}
-		}
+		CharacterData.get().values().stream().filter(cd -> filters.stream().allMatch(filter -> filter.filter(cd))).forEach(this.cds::add);
 
 		final boolean sortByBid = ShowConfig.isSortByBid();
 		final boolean sortByBloomNumber = ShowConfig.isSortByBloomNumber();

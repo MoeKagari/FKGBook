@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.Inflater;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
@@ -54,27 +52,7 @@ public class Puzzle {
 		}
 	}
 
-	public static byte[] decompress(byte[] data) {
-		try (ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)) {
-			Inflater decompresser = new Inflater();
-			decompresser.reset();
-			decompresser.setInput(data);
-
-			byte[] buf = new byte[1024];
-			while (!decompresser.finished()) {
-				int i = decompresser.inflate(buf);
-				o.write(buf, 0, i);
-			}
-			decompresser.end();
-
-			return o.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return data;
-		}
-	}
-
-	public static int[] getRowCol(int size) {
+	private static int[] getRowCol(int size) {
 		switch (size) {
 			case 9:
 				return new int[] { 3, 3, 0 };
@@ -101,7 +79,7 @@ public class Puzzle {
 		}
 	}
 
-	public static void deal(byte[] source) {
+	private static void deal(byte[] source) {
 		long time = Calendar.getInstance().getTimeInMillis();
 		Json.createReader(new ByteArrayInputStream(source)).readObject().getJsonArray("turningCardSheetList").stream().//
 				map(Card::new).collect(Collectors.groupingBy(o -> o.turningCardSheetGroupId)).forEach((turningCardSheetGroupId, turningCardSheetGroupIdResult) -> {
@@ -113,7 +91,7 @@ public class Puzzle {
 				});
 	}
 
-	public static void deal(List<Card> levelResult, String filename) {
+	private static void deal(List<Card> levelResult, String filename) {
 		List<BufferedImage> images = new ArrayList<>();
 		Collections.sort(levelResult, (a, b) -> Integer.compare(a.cardOrderNum, b.cardOrderNum));
 		levelResult.stream().map(Puzzle::downloadCard).forEach(images::add);

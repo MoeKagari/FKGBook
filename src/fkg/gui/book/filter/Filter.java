@@ -1,6 +1,6 @@
-package show.filter;
+package fkg.gui.book.filter;
 
-import show.data.CharacterData;
+import fkg.gui.book.data.CharacterData;
 
 public interface Filter {
 	public boolean filter(CharacterData cd);

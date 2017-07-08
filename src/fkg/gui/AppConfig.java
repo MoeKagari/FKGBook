@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.eclipse.swt.graphics.Point;
+
 public class AppConfig {
 	private static final String FILEPATH = "config";
 	private static final Properties config = new Properties();
@@ -92,6 +94,28 @@ public class AppConfig {
 
 	public static String cachePath() {
 		return config.getProperty("cachePath", null);
+	}
+
+	public static Point getStoryViewerSize() {
+		int width = Integer.parseInt(config.getProperty("StoryViewerWidth", String.valueOf(400)));
+		int height = Integer.parseInt(config.getProperty("StoryViewerHeight", String.valueOf(600)));
+		return new Point(width, height);
+	}
+
+	public static void setStoryViewerSize(Point size) {
+		config.setProperty("StoryViewerWidth", String.valueOf(size.x));
+		config.setProperty("StoryViewerHeight", String.valueOf(size.y));
+	}
+
+	public static Point getStoryViewerLocation() {
+		int x = Integer.parseInt(config.getProperty("StoryViewerLocationX", String.valueOf(400)));
+		int y = Integer.parseInt(config.getProperty("StoryViewerLocationY", String.valueOf(600)));
+		return new Point(x, y);
+	}
+
+	public static void setStoryViewerLocation(Point size) {
+		config.setProperty("StoryViewerLocationX", String.valueOf(size.x));
+		config.setProperty("StoryViewerLocationY", String.valueOf(size.y));
 	}
 
 }

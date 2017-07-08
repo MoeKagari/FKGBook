@@ -1,4 +1,4 @@
-package show.config;
+package fkg.gui.book;
 
 import tool.MD5;
 
@@ -15,6 +15,8 @@ public class ShowConfig {
 	private static final String CHARACTER_STAND_NETPATH = profix + "images/character/s/";
 	public static final String CHARACTER_STAND_S = "resources\\character_image\\stand_s";
 	private static final String CHARACTER_STAND_S_NETPATH = profix + "images/character/s/";
+	public static final String CHARACTER_STORY = "resources\\character_story";
+	private static final String CHARACTER_STORY_NETPATH = profix + "event/story/";
 
 	public static String getCharacterIconNetpath(int id) {
 		return CHARACTER_ICON_NETPATH + MD5.getMD5("icon_s_" + id) + ".bin";
@@ -26,6 +28,11 @@ public class ShowConfig {
 
 	public static String getCharacterStandSNetpath(int id) {
 		return CHARACTER_STAND_S_NETPATH + MD5.getMD5("stand_s_" + id) + ".bin";
+	}
+
+	/** 非角色ID,而是角色的个人剧情对应的MasterStory里面的ID */
+	public static String getCharacterStoryNetpath(int id) {
+		return CHARACTER_STORY_NETPATH + MD5.getMD5(String.format("story_%06d", id)) + ".bin";
 	}
 
 	/*------------------------------------------------------------------------------------------------------------------*/

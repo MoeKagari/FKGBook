@@ -1,4 +1,4 @@
-package show.data;
+package fkg.gui.book.data;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,10 +7,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,19 +21,17 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.io.FileUtils;
 
+import fkg.gui.book.ShowConfig;
 import fkg.patch.api.getMaster.CharacterInformation;
 import fkg.patch.api.getMaster.CharacterLeaderSkill;
+import fkg.patch.api.getMaster.CharacterQuest;
 import fkg.patch.api.getMaster.CharacterSkill;
 import fkg.patch.api.getMaster.GetMasterData;
-import show.config.ShowConfig;
+import fkg.patch.api.getMaster.MasterStory;
 import tool.Downloader;
-import tool.ZLibUtils;
+import tool.ZLib;
 
 public class CharacterData {
-	public static final List<GetMasterData> css = GetMasterData.get(CharacterSkill.key, CharacterSkill::new);
-	public static final List<GetMasterData> clss = GetMasterData.get(CharacterLeaderSkill.key, CharacterLeaderSkill::new);
-	public static final List<GetMasterData> cis = GetMasterData.get(CharacterInformation.key, CharacterInformation::new);
-
 	public static class Skill {
 		public final String mainSkillName;
 		public final String mainSkillEffect;
@@ -54,48 +54,18 @@ public class CharacterData {
 		}
 	}
 
-	public static void main(String[] args) {
-		cis.forEach(ele -> {
-			if (ele instanceof CharacterInformation) {
-				CharacterInformation ci = (CharacterInformation) ele;
-				if (ci.isCharacter() == false) return;
-				if (ci.getOeb() == 3 && ci.getKariBloom()) return;
-
-				int id = ci.getID();
-				String[][] pathss = { //
-						{ String.format("%s\\%d.png", ShowConfig.CHARACTER_ICON, id), ShowConfig.getCharacterIconNetpath(id) },//
-						{ String.format("%s\\%d.png", ShowConfig.CHARACTER_STAND, id), ShowConfig.getCharacterStandNetpath(id) },//
-						{ String.format("%s\\%d.png", ShowConfig.CHARACTER_STAND_S, id), ShowConfig.getCharacterStandSNetpath(id) }//
-				};
-				for (String[] paths : pathss) {
-					File file = new File(paths[0]);
-					if (file.exists() == false) {
-						byte[] bytes = Downloader.download(paths[1]);
-						if (bytes != null) {
-							bytes = ZLibUtils.decompress(bytes);
-							if (bytes != null) {
-								try {
-									FileUtils.writeByteArrayToFile(file, bytes);
-								} catch (IOException ex) {
-									ex.printStackTrace();
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-	}
-
 	public final CharacterInformation ci;
 
 	private int[] hp = new int[3];
 	private int[] attack = new int[3];
 	private int[] defense = new int[3];
 
-	public int bloomNumber;
-	public Skill skill;
-	public String chineseName;
+	public final int bloomNumber;
+	public final Skill skill;
+	public final String chineseName;
+
+	private final int image_id;
+	public final ImageIcon icon;
 
 	public CharacterData(CharacterInformation ci) {
 		this.ci = ci;
@@ -109,13 +79,13 @@ public class CharacterData {
 		CharacterInformation evo = null;
 		switch (ci.getOeb()) {
 			case 1:
-				evo = CharacterInformation.getElement(cis, ci.getID() + 1);
+				evo = CharacterInformation.getElement(GetMasterData.MASTERCHARACTER, ci.getID() + 1);
 				break;
 			case 2:
 				evo = ci;
 				break;
 			case 3:
-				evo = CharacterInformation.getElement(cis, ci.getID() + 1 - 300000);
+				evo = CharacterInformation.getElement(GetMasterData.MASTERCHARACTER, ci.getID() + 1 - 300000);
 				break;
 		}
 		if (evo == null) evo = ci;
@@ -131,7 +101,7 @@ public class CharacterData {
 			String skill2Effect;
 			int[] skill2Type;
 
-			GetMasterData[] skills = ci.getSkill(css, clss);
+			GetMasterData[] skills = ci.getSkill(GetMasterData.MASTERSKILL, GetMasterData.MASTERLEADERSKILL);
 			GetMasterData skill;
 
 			skill = skills[2];
@@ -168,31 +138,23 @@ public class CharacterData {
 
 			this.skill = new Skill(mainSkillName, mainSkillEffect, mainSkillType, skill1Effect, skill1Type, skill2Effect, skill2Type);
 		}
-	}
 
-	public ImageIcon getIcon() {
 		int image_id = this.ci.getID();
 		if (this.ci.getOeb() == 3 && this.ci.getKariBloom()) {
 			image_id = image_id - 300000 + 1;
 		}
-		return new ImageIcon(getImage(image_id, ShowConfig.CHARACTER_ICON, ShowConfig.getCharacterIconNetpath(image_id), 50, 50));
+		this.image_id = image_id;
+		this.icon = new ImageIcon(getImage(image_id, ShowConfig.CHARACTER_ICON, ShowConfig.getCharacterIconNetpath(image_id), 50, 50));
+
 	}
 
 	public BufferedImage getStand() {
-		int image_id = this.ci.getID();
-		if (this.ci.getOeb() == 3 && this.ci.getKariBloom()) {
-			image_id = image_id - 300000 + 1;
-		}
-		return getImage(image_id, ShowConfig.CHARACTER_STAND, ShowConfig.getCharacterStandNetpath(image_id), 960, 640);
+		return getImage(this.image_id, ShowConfig.CHARACTER_STAND, ShowConfig.getCharacterStandNetpath(this.image_id), 960, 640);
 	}
 
 	public BufferedImage getSkillImage() {
-		int image_id = this.ci.getID();
-		if (this.ci.getOeb() == 3 && this.ci.getKariBloom()) {
-			image_id = image_id - 300000 + 1;
-		}
 		BufferedImage buffer = getSkillImage(this);
-		BufferedImage stand_s = getImage(image_id, ShowConfig.CHARACTER_STAND_S, ShowConfig.getCharacterStandSNetpath(image_id), 329, 467);
+		BufferedImage stand_s = getImage(this.image_id, ShowConfig.CHARACTER_STAND_S, ShowConfig.getCharacterStandSNetpath(this.image_id), 329, 467);
 		BufferedImage skillImage = new BufferedImage(buffer.getWidth(), buffer.getHeight() + stand_s.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 		Graphics g = skillImage.createGraphics();
@@ -202,7 +164,67 @@ public class CharacterData {
 		return skillImage;
 	}
 
+	public String[][] getCharacterStory() {
+		int oeb = this.ci.getOeb();
+		int o_id = this.ci.getID() - (oeb == 2 ? 1 : (oeb == 3 ? 300000 : 0));
+
+		return new String[][] { getStoryInformation(o_id, 1), getStoryInformation(o_id, 2), getStoryInformation(o_id + 1, 3), getStoryInformation(o_id + 300000, 4) };
+	}
+
 	/*------------------------------------------------------*/
+
+	private static String[] getStoryInformation(int id, int index) {
+		String[] story = null;
+		for (GetMasterData obj : GetMasterData.MASTERCHARACTERSTORY) {
+			CharacterQuest cq = (CharacterQuest) obj;
+			if (cq.cid == id && cq.index == index) {
+				story = new String[] { null, null };
+				story[0] = cq.name;
+				for (GetMasterData gmd : GetMasterData.MASTERSTORY) {
+					MasterStory ms = (MasterStory) gmd;
+					if (ms.getIdInType() == cq.id) {
+						story[1] = resolveStory(getStoryContent(id, index, ms.getId()));
+						break;
+					}
+				}
+			}
+		}
+		return story;
+	}
+
+	private static byte[] getStoryContent(int id, int index, int ms_id) {
+		String filepath = String.format("%s\\%d" + (index <= 2 ? ("_" + index) : "") + ".txt", ShowConfig.CHARACTER_STORY, id);
+		try {
+			return FileUtils.readFileToByteArray(new File(filepath));
+		} catch (IOException e) {
+			byte[] content = Downloader.download(ShowConfig.getCharacterStoryNetpath(ms_id));
+			if (content != null) {
+				content = ZLib.decompress(content);
+				if (content != null) {
+					try {
+						FileUtils.writeByteArrayToFile(new File(filepath), content);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			return content;
+		}
+	}
+
+	private static String resolveStory(byte[] content) {
+		if (content == null) return null;
+		StringBuilder sb = new StringBuilder();
+		new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content), Charset.forName("utf-8")))//
+				.lines().filter(line -> line.startsWith("mess,")).forEach(line -> {
+					String[] eles = line.split(",");
+					if ("".equals(eles[1]) == false) {
+						sb.append(eles[1]).append("\n");
+					}
+					sb.append(eles[2].replace("\\n", "\n")).append("\n").append("\n");
+				});
+		return sb.toString();
+	}
 
 	private static BufferedImage getSkillImage(CharacterData cd) {
 		BufferedImage image = new BufferedImage(frameImage.getWidth(), frameImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -338,21 +360,19 @@ public class CharacterData {
 		try {
 			image = ImageIO.read(new File(filepath));
 		} catch (IOException e) {
-			if (urlStr != null) {
-				byte[] bytes = Downloader.download(urlStr);
+			byte[] bytes = Downloader.download(urlStr);
+			if (bytes != null) {
+				bytes = ZLib.decompress(bytes);
 				if (bytes != null) {
-					bytes = ZLibUtils.decompress(bytes);
-					if (bytes != null) {
-						try {
-							FileUtils.writeByteArrayToFile(new File(filepath), bytes);
-						} catch (IOException ex) {
-							ex.printStackTrace();
-						}
-						try {
-							image = ImageIO.read(new ByteArrayInputStream(bytes));
-						} catch (IOException ex) {
-							ex.printStackTrace();
-						}
+					try {
+						FileUtils.writeByteArrayToFile(new File(filepath), bytes);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+					try {
+						image = ImageIO.read(new ByteArrayInputStream(bytes));
+					} catch (IOException ex) {
+						ex.printStackTrace();
 					}
 				}
 			}
@@ -389,7 +409,7 @@ public class CharacterData {
 		if (cdMap == null) {
 			cdMap = new TreeMap<>();
 
-			for (GetMasterData obj : cis) {
+			for (GetMasterData obj : GetMasterData.MASTERCHARACTER) {
 				if (obj instanceof CharacterInformation) {
 					CharacterInformation ci = (CharacterInformation) obj;
 					if (ci.isCharacter()) {
@@ -402,4 +422,5 @@ public class CharacterData {
 
 		return cdMap;
 	}
+
 }

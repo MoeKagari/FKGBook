@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Base64;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 
-import fkg.patch.CommunicateHandler.FKGApiHandler;
-import tool.ZLibUtils;
+import fkg.patch.FKGApiHandler;
+import tool.ZLib;
 
 public class GetMaster extends FKGApiHandler {
 	public final static String dir = "resources\\getMaster";
@@ -26,8 +27,8 @@ public class GetMaster extends FKGApiHandler {
 	}
 
 	@Override
-	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) {
-		Json.createReader(new ByteArrayInputStream(ZLibUtils.decompress(responseBody.toByteArray()))).readObject().forEach((key, value) -> {
+	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Map<String, String> headers, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) {
+		Json.createReader(new ByteArrayInputStream(ZLib.decompress(responseBody.toByteArray()))).readObject().forEach((key, value) -> {
 			byte[] data;
 
 			switch (value.getValueType()) {

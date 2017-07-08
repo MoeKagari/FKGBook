@@ -1,6 +1,6 @@
-package show.filter;
+package fkg.gui.book.filter;
 
-import show.data.CharacterData;
+import fkg.gui.book.data.CharacterData;
 
 public class OEBFilter implements Filter {
 	public static final StringInteger[] SIS = {//

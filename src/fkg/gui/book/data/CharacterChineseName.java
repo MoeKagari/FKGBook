@@ -1,11 +1,11 @@
-package show.data;
+package fkg.gui.book.data;
 
 import java.io.File;
 import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 
-import show.config.ShowConfig;
+import fkg.gui.book.ShowConfig;
 
 public class CharacterChineseName {
 

@@ -1,4 +1,4 @@
-package show.filter;
+package fkg.gui.book.filter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,8 +6,8 @@ import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 
-import show.config.ShowConfig;
-import show.data.CharacterData;
+import fkg.gui.book.ShowConfig;
+import fkg.gui.book.data.CharacterData;
 
 public class SkilltypeFilter implements Filter {
 	public static final StringInteger[] SIS;

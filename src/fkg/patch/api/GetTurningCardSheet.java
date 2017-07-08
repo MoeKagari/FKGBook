@@ -4,14 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 
-import fkg.patch.CommunicateHandler.FKGApiHandler;
-import tool.ZLibUtils;
+import fkg.patch.FKGApiHandler;
+import tool.ZLib;
 
 public class GetTurningCardSheet extends FKGApiHandler {
 	public final static String filename = "GetTurningCardSheet.data";
@@ -25,9 +26,9 @@ public class GetTurningCardSheet extends FKGApiHandler {
 	}
 
 	@Override
-	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) {
+	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Map<String, String> headers, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) {
 		try {
-			FileUtils.writeByteArrayToFile(new File(filename), Base64.getDecoder().decode(ZLibUtils.decompress(responseBody.toByteArray())));
+			FileUtils.writeByteArrayToFile(new File(filename), Base64.getDecoder().decode(ZLib.decompress(responseBody.toByteArray())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

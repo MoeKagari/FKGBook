@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -19,11 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.client.api.Response;
 
-import fkg.patch.CommunicateHandler.FKGApiHandler;
+import fkg.patch.FKGApiHandler;
 import fkg.patch.api.getMaster.CharacterBook;
 import fkg.patch.api.getMaster.CharacterInformation;
 import fkg.patch.api.getMaster.GetMasterData;
-import tool.ZLibUtils;
+import tool.ZLib;
 
 public class GetBook extends FKGApiHandler {
 	public GetBook() {
@@ -41,22 +42,33 @@ public class GetBook extends FKGApiHandler {
 	public void onContent(HttpServletResponse httpResponse, byte[] buffer, int offset, int length) throws IOException {}
 
 	@Override
-	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) throws IOException {
+	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Map<String, String> headers, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) throws IOException {
 		byte[] bytes = responseBody.toByteArray();
-		bytes = ZLibUtils.decompress(bytes);
+		bytes = ZLib.decompress(bytes);
 		bytes = Base64.getDecoder().decode(bytes);
 		String version = Json.createReader(new ByteArrayInputStream(bytes)).readObject().getString("version");
 		bytes = getAllcgString(version).getBytes();
 		bytes = Base64.getEncoder().encode(bytes);
-		bytes = ZLibUtils.compress(bytes);
+		bytes = ZLib.compress(bytes);
 
-		httpResponse.addHeader("Content-Type", "text/plain");
-		httpResponse.addHeader("Content-Length", String.valueOf(bytes.length));
+		int length = bytes.length;
+		headers.forEach((name, value) -> {
+			if ("Content-Length".equals(name)) {
+				httpResponse.addHeader("Content-Length", String.valueOf(length));
+			} else {
+				httpResponse.addHeader(name, value);
+			}
+		});
 		httpResponse.getOutputStream().write(bytes, 0, bytes.length);
 	}
 
 	@Override
 	public boolean storeResponseBody() {
+		return true;
+	}
+
+	@Override
+	public boolean storeHeaders() {
 		return true;
 	}
 
@@ -79,7 +91,7 @@ public class GetBook extends FKGApiHandler {
 			cid.add(id);
 		}
 
-		List<GetMasterData> cis = GetMasterData.get(CharacterInformation.key, CharacterInformation::new);
+		List<GetMasterData> cis = GetMasterData.MASTERCHARACTER;
 		for (GetMasterData obj : cis) {
 			if (obj instanceof CharacterInformation) {
 				CharacterInformation ci = (CharacterInformation) obj;
@@ -89,7 +101,7 @@ public class GetBook extends FKGApiHandler {
 			}
 		}
 
-		List<GetMasterData> cbs = GetMasterData.get(CharacterBook.key, CharacterBook::new);
+		List<GetMasterData> cbs = GetMasterData.MASTERBOOK;
 		for (GetMasterData obj : cbs) {
 			if (obj instanceof CharacterBook) {
 				CharacterBook cb = (CharacterBook) obj;

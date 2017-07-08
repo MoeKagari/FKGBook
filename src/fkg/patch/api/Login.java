@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.json.Json;
@@ -15,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.client.api.Response;
 
 import fkg.gui.AppConfig;
-import fkg.patch.CommunicateHandler.FKGApiHandler;
-import tool.ZLibUtils;
+import fkg.patch.FKGApiHandler;
+import tool.ZLib;
 
 public class Login extends FKGApiHandler {
 	public Login() {
@@ -34,21 +35,32 @@ public class Login extends FKGApiHandler {
 	public void onContent(HttpServletResponse httpResponse, byte[] buffer, int offset, int length) throws IOException {}
 
 	@Override
-	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) throws IOException {
+	public void onSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse, Map<String, String> headers, ByteArrayOutputStream requestBody, ByteArrayOutputStream responseBody) throws IOException {
 		byte[] bytes = responseBody.toByteArray();
-		bytes = ZLibUtils.decompress(bytes);
+		bytes = ZLib.decompress(bytes);
 		bytes = Base64.getDecoder().decode(bytes);
 		bytes = patch(bytes, AppConfig.getFutuanzhangID());
 		bytes = Base64.getEncoder().encode(bytes);
-		bytes = ZLibUtils.compress(bytes);
+		bytes = ZLib.compress(bytes);
 
-		httpResponse.addHeader("Content-Type", "text/plain");
-		httpResponse.addHeader("Content-Length", String.valueOf(bytes.length));
+		int length = bytes.length;
+		headers.forEach((name, value) -> {
+			if ("Content-Length".equals(name)) {
+				httpResponse.addHeader("Content-Length", String.valueOf(length));
+			} else {
+				httpResponse.addHeader(name, value);
+			}
+		});
 		httpResponse.getOutputStream().write(bytes, 0, bytes.length);
 	}
 
 	@Override
 	public boolean storeResponseBody() {
+		return true;
+	}
+
+	@Override
+	public boolean storeHeaders() {
 		return true;
 	}
 
