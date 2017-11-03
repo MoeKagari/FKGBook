@@ -1,6 +1,6 @@
 package fkg.masterdata;
 
-import fkg.gui.jfx.CenterShowListPane.CharacterData;
+import fkg.gui.jfx.other.CharacterData;
 
 public class CharacterInformation extends CharacterData implements GetMasterData {
 	int cid, cid1;

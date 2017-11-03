@@ -21,13 +21,4 @@ public class StringInteger {
 	public int getInteger() {
 		return this.integer;
 	}
-
-	public static String[] toStringArray(StringInteger[] sis) {
-		int len = sis.length;
-		String[] ss = new String[len];
-		for (int i = 0; i < len; i++) {
-			ss[i] = sis[i].string;
-		}
-		return ss;
-	}
 }

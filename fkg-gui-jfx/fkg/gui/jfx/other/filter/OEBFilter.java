@@ -1,6 +1,6 @@
-package fkg.gui.jfx.filter;
+package fkg.gui.jfx.other.filter;
 
-import fkg.gui.jfx.CenterShowListPane.CharacterData;
+import fkg.gui.jfx.other.CharacterData;
 import fkg.other.StringInteger;
 
 public class OEBFilter implements Filter {

@@ -11,10 +11,16 @@ import tool.compress.ZLib;
 class CacheDownloader {
 	public static void download(int id, CacheInformation cain) {
 		byte[] bytes = Downloader.download(cain.getUrlstr());
-		if (bytes == null) return;
+		if (bytes == null) {
+			System.out.println(cain.getFilename());
+			return;
+		}
 
 		bytes = ZLib.decompress(bytes);
-		if (bytes == null) return;
+		if (bytes == null) {
+			System.out.println(cain.getFilename());
+			return;
+		}
 
 		String exten = cain.getExten();
 

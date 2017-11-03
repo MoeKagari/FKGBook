@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -30,14 +33,12 @@ import fkg.patch.api.GetTurningCardSheet;
 import fkg.patch.api.Login;
 import server.CommunicationHandler;
 import server.ProxyServerServlet;
-import server.ServerConfig;
 import tool.compress.GZIP;
 import tool.function.FunctionUtils;
 
-@SuppressWarnings("serial")
 public class FKGServerServlet extends ProxyServerServlet {
-	public FKGServerServlet(ServerConfig config) {
-		super(config);
+	public FKGServerServlet(IntSupplier listenPort, BooleanSupplier useProxy, Supplier<String> proxyHost, IntSupplier proxyPort) {
+		super(listenPort, useProxy, proxyHost, proxyPort);
 	}
 
 	Set<String> ids = new TreeSet<>(Comparator.comparing(FunctionUtils::returnSelf));
@@ -80,7 +81,7 @@ public class FKGServerServlet extends ProxyServerServlet {
 		String pa = "/files/AssetBundles/5.3/WebGL/omake/omake_thumb_";
 		if (uri.startsWith(pa)) {
 			this.ids.add(uri.substring(pa.length(), pa.length() + 5));
-			System.out.println(String.join(",", this.ids));
+			//System.out.println(String.join(",", this.ids));
 		}
 
 		super.service(httpRequest, httpResponse);
@@ -90,13 +91,13 @@ public class FKGServerServlet extends ProxyServerServlet {
 	public CommunicationHandler getHandler(String serverName, String uri) {
 		if (FKGApiHandler.getServerName().equals(serverName)) {
 			if (Login.getUri().equals(uri)) {
-				if (AppConfig.patch() && AppConfig.isTihuan()) {
+				if (AppConfig.isTihuan()) {
 					return new Login();
 				}
 			} else
 
 			if (GetBook.getUri().equals(uri)) {
-				if (AppConfig.patch() && AppConfig.isAllCG()) {
+				if (AppConfig.isAllCG()) {
 					return new GetBook();
 				}
 			} else

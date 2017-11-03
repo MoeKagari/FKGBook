@@ -1,4 +1,4 @@
-package fkg.gui.jfx.filter;
+package fkg.gui.jfx.other.filter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.Comparator;
 import org.apache.commons.io.FileUtils;
 
 import fkg.config.ShowConfig;
-import fkg.gui.jfx.CenterShowListPane.CharacterData;
+import fkg.gui.jfx.other.CharacterData;
 import fkg.other.StringInteger;
 
 public class SkilltypeFilter implements Filter {

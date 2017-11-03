@@ -19,12 +19,15 @@ public interface GetMasterData {
 	public static final List<CharacterQuest> MASTERCHARACTERSTORY = GetMasterData.get("masterCharacterQuest", CharacterQuest::new);
 	public static final List<CharacterBook> MASTERBOOK = GetMasterData.get("masterCharacterBook", CharacterBook::new);
 	public static final List<CharacterLeaderSkillDescription> MASTERLEADERSKILLDESCRIPTION = GetMasterData.get("masterCharacterLeaderSkillDescription", CharacterLeaderSkillDescription::new);
-	public static final List<CharacterInformation> MASTERCHARACTER = GetMasterData.get("masterCharacter", CharacterInformation::new);
+	public static final List<CharacterMypageVoiceResourceGroup> MASTERCHARACTERMYPAGEVOICERESOURCEGROUP = GetMasterData.get("masterCharacterMypageVoiceResourceGroup", CharacterMypageVoiceResourceGroup::new);
+	public static final List<CharacterMypageVoiceResource> MASTERCHARACTERMYPAGEVOICERESOURCE = GetMasterData.get("masterCharacterMypageVoiceResource", CharacterMypageVoiceResource::new);
+	public static final List<CharacterInformation> MASTERCHARACTER = GetMasterData.get("masterCharacter", CharacterInformation::new);//在最后
 
 	static <T> List<T> get(String key, Function<String, T> gdd) {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(GetMaster.dir + "\\" + key + ".csv")), "utf-8"))) {
 			return reader.lines().map(gdd).collect(Collectors.toCollection(ArrayList::new));
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
