@@ -1,0 +1,54 @@
+.book-row {
+
+}
+
+.book-head {
+
+}
+
+.book-head-cell {
+    -fx-background-color: #09294a88;
+}
+
+.book-body-content {
+    -fx-spacing: 4;
+}
+
+.book-body-row-even {
+    -fx-background-color: #99999908;
+}
+
+.book-body-row-odd {
+    -fx-background-color: #99999910;
+}
+
+.book-body-row-hover {
+    -fx-background-color: #99ccff28;
+}
+
+.book-scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.book-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.book-scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.book-scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.book-scroll-bar .thumb {
+    -fx-background-color: #aaaaaa30;
+}
+
+.book-scroll-bar .decrement-button,
+.book-scroll-bar .decrement-button .decrement-arrow,
+.book-scroll-bar .increment-button,
+.book-scroll-bar .increment-button .increment-arrow {
+    visibility: hidden;
+}

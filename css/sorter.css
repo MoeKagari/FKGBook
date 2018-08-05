@@ -1,0 +1,25 @@
+#sorter {
+    -fx-spacing: 20;
+}
+
+#sorter .child {
+    -fx-hgap: 10;
+    -fx-grid-lines-visible: false;
+}
+
+#sorter .child.single {
+    -fx-vgap: 10;
+}
+
+#sorter .child.multiple {
+    -fx-vgap: 10;
+}
+
+#sorter .child .choice {
+    -fx-cursor: hand;
+    -fx-background-color: color_background_sorter_child_choice;
+}
+
+#sorter .child .choice.active {
+    -fx-background-color: color_background_sorter_child_choice-active;
+}

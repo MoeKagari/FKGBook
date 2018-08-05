@@ -1,0 +1,143 @@
+.table-view#book2 {
+    -fx-alignment: center;
+    -fx-background-color: color_background_book;
+}
+
+.table-view#book2 > .virtual-flow > .scroll-bar:vertical .decrement-button,
+.table-view#book2 > .virtual-flow > .scroll-bar:vertical .decrement-arrow,
+.table-view#book2 > .virtual-flow > .scroll-bar:vertical .increment-button,
+.table-view#book2 > .virtual-flow > .scroll-bar:vertical .increment-arrow {
+    visibility: hidden;
+    -fx-pref-height: 0;
+}
+
+.table-view#book2 > .virtual-flow > .scroll-bar:horizontal .decrement-button,
+.table-view#book2 > .virtual-flow > .scroll-bar:horizontal .decrement-arrow,
+.table-view#book2 > .virtual-flow > .scroll-bar:horizontal .increment-button,
+.table-view#book2 > .virtual-flow > .scroll-bar:horizontal .increment-arrow {
+    visibility: hidden;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column.center > .label {
+    -fx-alignment: center;
+}
+
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column.center_left > .label {
+    -fx-alignment: center-left;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell > .cell.indexed-cell.table-cell.table-column {
+    /* TableCell */
+    -fx-font-size: 18;
+    -fx-text-fill: font_color;
+    -fx-padding: 6 0 3 0; /*不知为何 top 实际只显示一半 , 所以取成两倍*/
+}
+
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column > .label {
+    -fx-padding: 5 0;
+}
+
+/*----------------------------------------------------------------------*/
+
+.table-view#book2 > .column-header-background,
+    /* StackPane */
+.table-view#book2 > .column-header-background > .filler,
+    /* Region - area of header not taken by column headers */
+.table-view#book2 > .column-header-background > .column-drag-header,
+    /* StackPane */
+.table-view#book2 > .column-header-background > .column-drag-header > .label,
+    /* Label */
+.table-view#book2 > .column-header-background > .column-drag-header > .label > .text,
+    /* Text */
+.table-view#book2 > .column-header-background > .nested-column-header {
+    /* Region */
+    -fx-background-color: transparent;
+}
+
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column {
+    /* Region */
+    -fx-background-color: color_background_book_header;
+}
+
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column > .label,
+    /* Label */
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column > .label > .text,
+    /* Text */
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column > Grid,
+    /* Grid */
+.table-view#book2 > .column-header-background > .nested-column-header > .column-header.table-column > Grid > .arrow,
+    /* Region */
+.table-view#book2 > .column-header-background > .nested-column-header > Rectangle,
+    /* Rectangle - separates column headers. Resize icon on :hover */
+.table-view#book2 > .column-header-background > .show-hide-columns-button,
+    /* StackPane */
+.table-view#book2 > .column-header-background > .show-hide-columns-button > .show-hide-column-image {
+    /* StackPane */
+    -fx-background-color: transparent;
+}
+
+.table-view#book2 > .column-overlay {
+    /* Region - highlights column being dragged */
+}
+
+.table-view#book2 > .column-resize-line {
+    /* Region - displays where the dragged column will drop  */
+}
+
+.table-view#book2 > .virtual-flow,
+    /* Region */
+.table-view#book2 > .virtual-flow > .clipped-container,
+    /* Region */
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet,
+    /* Group */
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell {
+    /* TableRow */
+    -fx-background-color: color_background_book_row;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell:odd {
+    -fx-background-color: color_background_book_row-odd;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell:even {
+    -fx-background-color: color_background_book_row-even;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell:hover {
+    -fx-background-color: color_background_book_row-hover;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell > .cell.indexed-cell.table-cell.table-column {
+    /* TableCell */
+    -fx-background-color: color_background_book_cell;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell > .cell.indexed-cell.table-cell.table-column:hover {
+    -fx-background-color: color_background_book_cell-hover;
+}
+
+.table-view#book2 > .virtual-flow > .clipped-container > .sheet > .cell.indexed-cell.table-row-cell > .cell.indexed-cell.table-cell.table-column > .text,
+    /* Text */
+.table-view#book2 > .virtual-flow > .scroll-bar,
+    /* ScrollBar - has :vertical and :horizontal (default) pseudo-class state */
+.table-view#book2 > .virtual-flow > .scroll-bar > .track-background,
+    /* StackPane */
+.table-view#book2 > .virtual-flow > .scroll-bar > .track {
+    /* StackPane */
+    -fx-background-color: transparent;
+}
+
+.table-view#book2 > .virtual-flow > .scroll-bar > .thumb {
+    /* StackPane */
+    -fx-background-color: color_background_book_scrollbar_thumb;
+}
+
+.table-view#book2 > .virtual-flow > .scroll-bar .decrement-button,
+.table-view#book2 > .virtual-flow > .scroll-bar .decrement-arrow,
+.table-view#book2 > .virtual-flow > .scroll-bar .increment-button,
+.table-view#book2 > .virtual-flow > .scroll-bar .increment-arrow {
+    /* Region */
+    -fx-background-color: transparent;
+}

@@ -1,0 +1,140 @@
+.label {
+    -fx-font-size: 18;
+    -fx-text-fill: font_color;
+}
+
+.button {
+    -fx-font-size: 18;
+    -fx-text-fill: font_color;
+}
+
+.background {
+
+}
+
+.titled-pane {
+    -fx-font-size: 18;
+    -fx-text-fill: font_color;
+    -fx-background-color: transparent;
+}
+
+.titled-pane .title {
+    -fx-background-color: transparent;
+}
+
+.titled-pane .content {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.content {
+
+}
+
+.content .tab {
+    -fx-alignment: center;
+    -fx-font-size: 40;
+    -fx-cursor: hand;
+    -fx-background-color: color_background_content_tab;
+}
+
+.content .tab:hover {
+    -fx-background-color: color_background_content_tab-hover;
+}
+
+.content .tab.book {
+    -fx-font-size: 35;
+}
+
+.content .tab.filter, .content .tab.sorter {
+    -fx-font-size: 20;
+}
+
+.content .tab.active {
+    -fx-cursor: none;
+    -fx-background-color: color_background_content_tab-active;
+}
+
+.content .tab-group .filler {
+    -fx-background-color: color_background_content_tab_group_filler;
+}
+
+.content .tab-node {
+
+}
+
+.detail {
+    -fx-background-color: color_background_detail;
+}
+
+.detail .container {
+    -fx-background-color: color_background_detail_container;
+}
+
+.detail .container .child {
+    -fx-padding: 0 10;
+    -fx-background-color: color_background_detail_container_child;
+}
+
+.detail .container .child.left .stand_s {
+    -fx-cursor: hand;
+}
+
+.detail .container .child.left .flower_language {
+    -fx-font-size: 16;
+    -fx-text-fill: font_color;
+}
+
+.detail .container .child.left .text-area.introduction {
+    -fx-font-size: 16;
+    -fx-text-fill: font_color;
+    -fx-prompt-text-fill: transparent;
+    -fx-highlight-fill: transparent;
+    -fx-highlight-text-fill: font_color;
+    -fx-wrap-text: true;
+    -fx-display-caret: false;
+    -fx-background-color: transparent;
+}
+
+.detail .container .child.left .text-area.introduction .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.detail .container .child.left .text-area.introduction .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.detail .container .child.left .text-area.introduction .scroll-pane .content {
+    -fx-cursor: default;
+    -fx-background-color: transparent;
+}
+
+.root {
+    font_color: #999999dd;
+
+    color_background_detail: transparent;
+    color_background_detail_container: #383838a0;
+    color_background_detail_container_child: #11111190;
+
+    color_background_content_tab: #55555530;
+    color_background_content_tab-hover: #55555550;
+    color_background_content_tab-active: transparent;
+    color_background_content_tab_group_filler: color_background_content_tab;
+
+    color_background_book: transparent;
+    color_background_book_header: #09294a28;
+    color_background_book_row: transparent;
+    color_background_book_row-odd: #55555510;
+    color_background_book_row-even: #55555508;
+    color_background_book_row-hover: #55555518;
+    color_background_book_cell: transparent;
+    color_background_book_cell-hover: color_background_book_row-hover;
+    color_background_book_scrollbar_thumb: #aaaaaa30;
+
+    color_background_filter_child_button: #99999920;
+    color_background_filter_child_choice: transparent;
+    color_background_filter_child_choice-active: #99999930;
+
+    color_background_sorter_child_choice: transparent;
+    color_background_sorter_child_choice-active: #99999930;
+}

@@ -1,0 +1,35 @@
+#filter {
+    -fx-spacing: 70;
+}
+
+#filter .child {
+    -fx-hgap: 10;
+    -fx-grid-lines-visible: false;
+}
+
+#filter .child.main {
+    -fx-vgap: 20;
+}
+
+#filter .child.skill, #filter .child.ability {
+    -fx-vgap: 10;
+}
+
+#filter .child .label {
+
+}
+
+#filter .child .button {
+    -fx-padding: 3 5;
+    -fx-cursor: hand;
+    -fx-background-color: color_background_filter_child_button;
+}
+
+#filter .child .choice {
+    -fx-cursor: hand;
+    -fx-background-color: color_background_filter_child_choice;
+}
+
+#filter .child .choice.active {
+    -fx-background-color: color_background_filter_child_choice-active;
+}
