@@ -33,7 +33,7 @@ public class Window {
 		stackPane.setBackground(FXUtils.createBackground(Color.TRANSPARENT));
 		stackPane.getChildren().addAll(background, content, detail, stand);
 		stackPane.getStylesheets().addAll(
-				ExStreamUtils.of("main", "book2", "filter", "sorter", "hensei", "config", "api")
+				ExStreamUtils.of("main", "book", "filter", "sorter", "statistics", "hensei", "config", "api")
 				             .map(name -> "css\\" + name + ".css")
 				             .map(FileUtils::getFileUrlString)
 				             .toList()

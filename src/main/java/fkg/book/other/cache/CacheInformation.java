@@ -47,13 +47,14 @@ public class CacheInformation {
 		//path.add(new CacheInformation("product/images/character/i/", "icon_m_" + id, "png"));
 		path.add(new CacheInformation("product/images/character/i/", "icon_l_" + id, "png"));
 		path.add(new CacheInformation("product/images/character/s/", "stand_s_" + id, "png"));
-		//对于进化前ID
-		path.add(new CacheInformation("product/images/character/s/", "chibi_" + id, "swf"));
+		path.add(new CacheInformation("product/images/character/s/", "stand_" + id, "png"));
+		path.add(new CacheInformation("product/images/character/s/", "cutin_" + id, "png"));
 
 		path.add(new CacheInformation("product/images/character/s/", "home_" + id, "png"));
 		for(int i = 0; i <= 10; i++) {
 			path.add(new CacheInformation("product/images/character/s/", "home_" + id + "_0" + i, "png"));
 		}
+
 
 		path.add(new CacheInformation("product/images/character/s/", "bustup_" + id, "png"));
 		for(int i = 0; i <= 10; i++) {
@@ -63,8 +64,10 @@ public class CacheInformation {
 		for(int i = 0; i <= 10; i++) {
 			path.add(new CacheInformation("product/images/character/s/", "bustup_" + id + "_2_0" + i, "png"));
 		}
-		path.add(new CacheInformation("product/images/character/s/", "cutin_" + id, "png"));
-		path.add(new CacheInformation("product/images/character/s/", "stand_" + id, "png"));
+
+		//对于进化前ID
+		path.add(new CacheInformation("product/images/character/s/", "chibi_" + id, "swf"));
+
 
 		if(id < 400000) {
 			path.add(new CacheInformation("product/images/hscene_r18/", "r18_" + id + "_000", "png"));
@@ -91,7 +94,7 @@ public class CacheInformation {
 				160019
 		).parallel().forEach(id -> {
 			CacheInformation.get(id).parallelStream().forEach(cain -> CacheDownloader.download(id, cain));
-			CacheInformation.get(id+1).parallelStream().forEach(cain -> CacheDownloader.download(id+1 , cain));
+			CacheInformation.get(id + 1).parallelStream().forEach(cain -> CacheDownloader.download(id + 1, cain));
 		});
 	}
 }

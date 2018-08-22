@@ -1,4 +1,4 @@
-package fkg.book.gui;
+package fkg.book.temp;
 
 import com.moekagari.tool.acs.ExStreamUtils;
 import com.moekagari.tool.compress.MD5;
@@ -30,30 +30,41 @@ public class AbstractCharaDataImage {
 	            .toArray(Image[]::new)
 	).toArray(Image[][]::new);
 
-	//@formatter:off
 	private static final String NET_PATH_PREFIX = "http://dugrqaqinbtcq.cloudfront.net/product/";
+	//@formatter:off
+	private static final String CHARACTER_CUTIN = "resources\\character_image\\cutin";
+	private static String getCutinNetPath(int id) {
+		return NET_PATH_PREFIX + "images/character/i/" + MD5.getMD5("cutin_" + id) + ".bin";
+	}
 
 	private static final String CHARACTER_ICON = "resources\\character_image\\icon";
-	private static String getCharacterIconNetPath(int id) {
+	private static String getIconNetPath(int id) {
 		return NET_PATH_PREFIX + "images/character/i/" + MD5.getMD5("icon_l_" + id) + ".bin";
 	}
 
 	private static final String CHARACTER_STAND = "resources\\character_image\\stand";
-	private static String getCharacterStandNetPath(int id) {
+	private static String getStandNetPath(int id) {
 		return NET_PATH_PREFIX + "images/character/s/" + MD5.getMD5("stand_" + id) + ".bin";
 	}
 
 	private static final String CHARACTER_STAND_S = "resources\\character_image\\stand_s";
-	private static String getCharacterStandSNetPath(int id) {
+	private static String getStandSNetPath(int id) {
 		return NET_PATH_PREFIX + "images/character/s/" + MD5.getMD5("stand_s_" + id) + ".bin";
 	}
 
 	public static final String CHARACTER_STORY = "resources\\character_story";
 	/** 非角色ID,而是角色的个人剧情对应的MasterStory里面的ID */
-	public static String getCharacterStoryNetPath(int id) {
+	public static String getStoryNetPath(int id) {
 		return NET_PATH_PREFIX + "event/story/" + MD5.getMD5(String.format("story_%06d", id)) + ".bin";
 	}
 	//@formatter:on
+
+	private final AbstractCharaData chara;
+	private Image[] icons;
+
+	public AbstractCharaDataImage(AbstractCharaData chara) {
+		this.chara = chara;
+	}
 
 	private Image getImage(String dir, IntFunction<String> urlStr, int width, int height) {
 		int image_id = this.chara.getImageId();
@@ -84,19 +95,16 @@ public class AbstractCharaDataImage {
 		return image != null ? image : new WritableImage(width, height);
 	}
 
-	private final AbstractCharaData chara;
-	private Image[] icons;
-
-	public AbstractCharaDataImage(AbstractCharaData chara) {
-		this.chara = chara;
+	public Image getCutin() {
+		return this.getImage(CHARACTER_CUTIN, AbstractCharaDataImage::getCutinNetPath, 960, 640);
 	}
 
 	public Image getStandS() {
-		return this.getImage(CHARACTER_STAND_S, AbstractCharaDataImage::getCharacterStandSNetPath, 329, 467);
+		return this.getImage(CHARACTER_STAND_S, AbstractCharaDataImage::getStandSNetPath, 329, 467);
 	}
 
 	public Image getStand() {
-		return this.getImage(CHARACTER_STAND, AbstractCharaDataImage::getCharacterStandNetPath, 960, 640);
+		return this.getImage(CHARACTER_STAND, AbstractCharaDataImage::getStandNetPath, 960, 640);
 	}
 
 	public Image[] getIcons() {
@@ -120,7 +128,7 @@ public class AbstractCharaDataImage {
 			}
 			return new Image[]{
 					ICON_DECORATION[0][this.chara.getRarity() - 1],
-					this.getImage(CHARACTER_ICON, AbstractCharaDataImage::getCharacterIconNetPath, ICON_SIZE, ICON_SIZE),
+					this.getImage(CHARACTER_ICON, AbstractCharaDataImage::getIconNetPath, ICON_SIZE, ICON_SIZE),
 					ICON_DECORATION[1][this.chara.getRarity() - 1],
 					ICON_DECORATION[2][this.chara.getAttackAttribute() - 1],
 					ICON_DECORATION[3][icon_index_oeb - 1]

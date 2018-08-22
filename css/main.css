@@ -8,10 +8,6 @@
     -fx-text-fill: font_color;
 }
 
-.background {
-
-}
-
 .titled-pane {
     -fx-font-size: 18;
     -fx-text-fill: font_color;
@@ -25,6 +21,12 @@
 .titled-pane .content {
     -fx-border-color: transparent;
     -fx-background-color: transparent;
+}
+
+/*--------------------------------------------------------------------------------------------------------*/
+
+.background {
+
 }
 
 .content {
@@ -132,6 +134,7 @@
     color_background_book_scrollbar_thumb: #aaaaaa30;
 
     color_background_filter_child_button: #99999920;
+    color_background_filter_child_label: transparent;
     color_background_filter_child_choice: transparent;
     color_background_filter_child_choice-active: #99999930;
 

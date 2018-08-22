@@ -25,6 +25,10 @@
     -fx-background-color: color_background_filter_child_button;
 }
 
+#filter .child .label {
+    -fx-background-color: color_background_filter_child_label;
+}
+
 #filter .child .choice {
     -fx-cursor: hand;
     -fx-background-color: color_background_filter_child_choice;

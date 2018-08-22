@@ -3,7 +3,7 @@ package fkg.book.temp.content;
 import com.moekagari.tool.acs.ArrayUtils;
 import com.moekagari.tool.acs.ExStreamUtils;
 import com.moekagari.tool.other.FXUtils;
-import fkg.book.gui.AbstractCharaData;
+import fkg.book.temp.AbstractCharaData;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -17,7 +17,6 @@ import javafx.scene.shape.Ellipse;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 /**
  * @author MoeKagari
@@ -31,7 +30,7 @@ public class WindowPaneContentTabNodeFilter extends VBox implements WindowPaneCo
 
 		List<ColumnConstraints> columnConstraintsList = ExStreamUtils.concat(
 				ExStreamUtils.of(FXUtils.createColumnConstraints(150, HPos.LEFT)),
-				IntStream.rangeClosed(1, 6).mapToObj(index -> FXUtils.createColumnConstraints(210, 220))
+				ExStreamUtils.generate(() -> FXUtils.createColumnConstraints(210, 220)).limit(6)
 		).toList();
 		this.getChildren().addAll(
 				this.filterChildMain = new FilterChildMain(columnConstraintsList),
@@ -47,8 +46,7 @@ public class WindowPaneContentTabNodeFilter extends VBox implements WindowPaneCo
 	private static class FilterChild extends GridPane {
 		private Predicate<AbstractCharaData> filter = chara -> true;
 
-		FilterChild(String styleClass, List<ColumnConstraints> columnConstraintsList, double vGap, FilterChildRowInfo... filterChildRowInfoArray) {
-			this.setVgap(vGap);
+		FilterChild(String styleClass, List<ColumnConstraints> columnConstraintsList, FilterChildRowInfo... filterChildRowInfoArray) {
 			this.setAlignment(Pos.CENTER);
 			this.getColumnConstraints().addAll(columnConstraintsList);
 			FXUtils.addStyleClass(this, "child", styleClass);
@@ -171,7 +169,7 @@ public class WindowPaneContentTabNodeFilter extends VBox implements WindowPaneCo
 
 	private static class FilterChildMain extends FilterChild {
 		FilterChildMain(List<ColumnConstraints> columnConstraintsList) {
-			super("main", columnConstraintsList, 30,
+			super("main", columnConstraintsList,
 			      new FilterChildRowInfo(
 					      "获得途径",
 					      new FilterChildChoice("卡池角色", AbstractCharaData::isGachaChara, true),
@@ -187,7 +185,7 @@ public class WindowPaneContentTabNodeFilter extends VBox implements WindowPaneCo
 					      new FilterChildChoice("还未开花", chara -> chara.getOeb() == 1 || chara.getOeb() == 2, true)
 			      ),
 			      new FilterChildRowInfo(
-					      "稀有度",
+					      "星级",
 					      new FilterChildChoice("六星", chara -> chara.getRarity() == 6, true),
 					      new FilterChildChoice("五星", chara -> chara.getRarity() == 5, true),
 					      new FilterChildChoice("四星", chara -> chara.getRarity() == 4, true),
@@ -219,7 +217,7 @@ public class WindowPaneContentTabNodeFilter extends VBox implements WindowPaneCo
 				String styleClass, List<ColumnConstraints> columnConstraintsList,
 				String rowName, FilterChildChoice... filterChildChoiceArrayExpectDefault
 		) {
-			super(styleClass, columnConstraintsList, 10, getFilterChildRowInfo(columnConstraintsList, rowName, filterChildChoiceArrayExpectDefault));
+			super(styleClass, columnConstraintsList, getFilterChildRowInfo(columnConstraintsList, rowName, filterChildChoiceArrayExpectDefault));
 		}
 
 		static FilterChildRowInfo getFilterChildRowInfo(List<ColumnConstraints> columnConstraintsList, String rowName, FilterChildChoice[] filterChildChoiceArrayExpectDefault) {

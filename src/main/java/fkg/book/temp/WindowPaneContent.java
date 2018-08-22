@@ -4,11 +4,13 @@ import com.moekagari.tool.acs.ArrayUtils;
 import com.moekagari.tool.other.FXUtils;
 import fkg.book.temp.content.WindowPaneContentTabNode;
 import fkg.book.temp.content.WindowPaneContentTabNodeApi;
-import fkg.book.temp.content.WindowPaneContentTabNodeBook2;
+import fkg.book.temp.content.WindowPaneContentTabNodeBook;
 import fkg.book.temp.content.WindowPaneContentTabNodeConfig;
 import fkg.book.temp.content.WindowPaneContentTabNodeFilter;
 import fkg.book.temp.content.WindowPaneContentTabNodeHensei;
 import fkg.book.temp.content.WindowPaneContentTabNodeSorter;
+import fkg.book.temp.content.WindowPaneContentTabNodeTool;
+import fkg.book.temp.content.WindowPaneContentTabStatistics;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -23,29 +25,35 @@ import java.util.function.Supplier;
  */
 public class WindowPaneContent extends BorderPane implements WindowPane {
 	public final Window window;
-	public final WindowPaneContentTab<WindowPaneContentTabNodeBook2> book2;
+	public final WindowPaneContentTab<WindowPaneContentTabNodeBook> book2;
 	public final WindowPaneContentTab<WindowPaneContentTabNodeFilter> filter;
 	public final WindowPaneContentTab<WindowPaneContentTabNodeSorter> sorter;
+	public final WindowPaneContentTab<WindowPaneContentTabStatistics> statistics;
 	public final WindowPaneContentTab<WindowPaneContentTabNodeHensei> hensei;
 	public final WindowPaneContentTab<WindowPaneContentTabNodeApi> api;
 	public final WindowPaneContentTab<WindowPaneContentTabNodeConfig> config;
+	public final WindowPaneContentTab<WindowPaneContentTabNodeTool> tool;
 
 	public WindowPaneContent(Window window) {
 		FXUtils.addStyleClass(this, "content");
 		this.window = window;
-		this.book2 = new WindowPaneContentTab<>(true, "图鉴", new WindowPaneContentTabNodeBook2(this));
+		this.book2 = new WindowPaneContentTab<>(true, "图鉴", new WindowPaneContentTabNodeBook(this));
 		this.filter = new WindowPaneContentTab<>("过滤", new WindowPaneContentTabNodeFilter());
 		this.sorter = new WindowPaneContentTab<>("排序", new WindowPaneContentTabNodeSorter());
+		this.statistics = new WindowPaneContentTab<>("统计", new WindowPaneContentTabStatistics());
 		this.hensei = new WindowPaneContentTab<>("编成", new WindowPaneContentTabNodeHensei());
 		this.api = new WindowPaneContentTab<>("API", new WindowPaneContentTabNodeApi());
 		this.config = new WindowPaneContentTab<>("设置", new WindowPaneContentTabNodeConfig());
+		this.tool = new WindowPaneContentTab<>("工具", new WindowPaneContentTabNodeTool());
 
-		FXUtils.addStyleClass(this.book2, "book2");
+		FXUtils.addStyleClass(this.book2, "book");
 		FXUtils.addStyleClass(this.filter, "filter");
 		FXUtils.addStyleClass(this.sorter, "sorter");
+		FXUtils.addStyleClass(this.statistics, "statistics");
 		FXUtils.addStyleClass(this.hensei, "hensei");
 		FXUtils.addStyleClass(this.api, "api");
 		FXUtils.addStyleClass(this.config, "config");
+		FXUtils.addStyleClass(this.tool, "tool");
 
 		//聚合 book , filter , sorter
 		Node bookFilterSorter = FXUtils.createGridPane(gridPane -> {
@@ -71,7 +79,7 @@ public class WindowPaneContent extends BorderPane implements WindowPane {
 		});
 
 		this.setTop(FXUtils.createGridPane(gridPane -> ArrayUtils.forEachWithIndex(
-				new Node[]{bookFilterSorter, this.hensei, this.api, this.config},
+				new Node[]{bookFilterSorter, this.statistics, this.hensei, this.api, this.config, this.tool},
 				(index, node) -> {
 					gridPane.getColumnConstraints().add(FXUtils.createColumnConstraints(300, null, Priority.ALWAYS));
 					gridPane.addColumn(index, node);

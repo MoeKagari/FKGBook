@@ -1,7 +1,5 @@
 package fkg.book.temp;
 
-import fkg.book.gui.AbstractCharaData;
-
 /**
  * @author MoeKagari
  */

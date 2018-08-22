@@ -1,7 +1,6 @@
 package fkg.book.temp;
 
 import com.moekagari.tool.other.FXUtils;
-import fkg.book.gui.AbstractCharaData;
 import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;

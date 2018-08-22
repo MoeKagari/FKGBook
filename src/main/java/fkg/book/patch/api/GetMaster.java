@@ -2,7 +2,6 @@ package fkg.book.patch.api;
 
 import com.moekagari.tool.compress.Base64;
 import com.moekagari.tool.compress.ZLib;
-import fkg.book.main.FKGBOOKApplicationMain;
 import fkg.book.patch.server.FKGBOOKApiHandler;
 
 import javax.json.Json;
@@ -27,7 +26,8 @@ public class GetMaster extends FKGBOOKApiHandler {
 
 	public static void main(String[] args) {
 		try {//masterCharacter
-			JsonObject json = Json.createReader(new ByteArrayInputStream(ZLib.decompress(Files.readAllBytes(new File("data").toPath())))).readObject();
+			JsonObject json = Json.createReader(new ByteArrayInputStream(ZLib.decompress(Files.readAllBytes(new File("data").toPath()))))
+			                      .readObject();
 			System.out.println(new String(Base64.decompress(json.getString("masterCharacter").getBytes()).get()));
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -39,25 +39,27 @@ public class GetMaster extends FKGBOOKApiHandler {
 		try {
 			byte[] masterData = responseBody.toByteArray();
 
+			/*
 			//备份主数据
 			if(FKGBOOKApplicationMain.getMainConfig().isSaveDataForMasterData()) {
 				File masterDataFile = new File(dir + File.separator + "backup" + File.separator + System.currentTimeMillis());
 				Files.createDirectories(masterDataFile.getParentFile().toPath());
 				Files.write(masterDataFile.toPath(), masterData);
 			}
+			*/
 
 			//分离各部分数据
-			Json.createReader(new ByteArrayInputStream(ZLib.decompressOptional(masterData).get())).readObject().forEach((key, value) -> {
+			Json.createReader(new ByteArrayInputStream(ZLib.decompressOptional(masterData).orElseThrow(Exception::new))).readObject().forEach((key, value) -> {
 				try {
 					byte[] data;
 
 					switch(value.getValueType()) {
 						case STRING:
 							data = ((JsonString) value).getString().getBytes();
-							if("resultCode".equals(key)||"buildVersion".equals(key)||"serverTime".equals(key)||"version".equals(key)) {
+							if("resultCode".equals(key) || "buildVersion".equals(key) || "serverTime".equals(key) || "version".equals(key)) {
 
 							} else {
-								data = Base64.decompress(data).orElseGet(() -> "Base64.decompress 错误".getBytes());
+								data = Base64.decompress(data).orElseGet("Base64.decompress 错误"::getBytes);
 							}
 							break;
 						case NULL:

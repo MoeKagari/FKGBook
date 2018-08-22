@@ -2,7 +2,7 @@ package fkg.book.masterdata;
 
 import com.moekagari.tool.lambda.LambdaUtils;
 import com.moekagari.tool.acs.ExStreamUtils;
-import fkg.book.gui.AbstractCharaData;
+import fkg.book.temp.AbstractCharaData;
 import fkg.book.patch.api.GetMaster;
 
 import java.io.BufferedReader;

@@ -1,6 +1,6 @@
 package fkg.book.masterdata;
 
-import fkg.book.gui.AbstractCharaData;
+import fkg.book.temp.AbstractCharaData;
 import fkg.book.masterdata.GetMasterData.GetMasterDataLineSpliter;
 
 public class CharacterInformation extends AbstractCharaData {

@@ -1,7 +1,7 @@
 package fkg.book.patch.api;
 
 import com.moekagari.tool.json.JsonUtils;
-import fkg.book.gui.AbstractCharaData;
+import fkg.book.temp.AbstractCharaData;
 import fkg.book.masterdata.CharacterBook;
 import fkg.book.masterdata.GetMasterData;
 import fkg.book.patch.server.FKGBOOKApiHandler;
